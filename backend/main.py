@@ -81,8 +81,7 @@ def read_root():
 def get_medicines(
     page: int = 1,
     page_size: int = 20,
-    search: Optional[str] = None,
-    current_user: dict = Depends(get_current_user)
+    search: Optional[str] = None
 ):
     if page < 1:
         page = 1
