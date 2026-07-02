@@ -157,3 +157,125 @@ def get_profile(current_user: dict = Depends(get_current_user)):
         "message": "Authenticated successfully",
         "user": current_user
     }
+
+# Pydantic schemas for Admin CRUD
+class MedicineCreate(BaseModel):
+    name: str
+    salt_name: str
+    image_url: Optional[str] = None
+    composition: Optional[str] = None
+    formulation: Optional[str] = None
+    status: Optional[str] = None
+    description: Optional[str] = None
+    side_effects: Optional[str] = None
+    dosage: Optional[str] = None
+    price: float
+    stock: int
+    min_order_quantity: int
+
+def get_supabase_client():
+    supabase_url = os.getenv("SUPABASE_URL")
+    supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_KEY")
+    if not supabase_url or not supabase_key:
+        raise HTTPException(
+            status_code=500,
+            detail="Supabase credentials are not configured in the backend environment."
+        )
+    return create_client(supabase_url, supabase_key)
+
+# 1. Create Medicine (POST)
+@app.post("/api/medicines", status_code=status.HTTP_201_CREATED)
+def create_medicine(med: MedicineCreate):
+    try:
+        supabase = get_supabase_client()
+        
+        # Resolve or create salt
+        salt_res = supabase.table("salts").select("id").eq("name", med.salt_name.strip()).execute()
+        if salt_res.data and len(salt_res.data) > 0:
+            salt_id = salt_res.data[0]["id"]
+        else:
+            # Create new salt
+            new_salt = {"name": med.salt_name.strip()}
+            insert_salt_res = supabase.table("salts").insert(new_salt).execute()
+            if not insert_salt_res.data or len(insert_salt_res.data) == 0:
+                raise HTTPException(status_code=500, detail="Failed to register active salt ingredient.")
+            salt_id = insert_salt_res.data[0]["id"]
+
+        # Insert new medicine row
+        new_med = {
+            "salt_id": salt_id,
+            "name": med.name.strip(),
+            "image_url": med.image_url.strip() if med.image_url else None,
+            "composition": med.composition.strip() if med.composition else None,
+            "formulation": med.formulation.strip() if med.formulation else None,
+            "status": med.status.strip() if med.status else None,
+            "description": med.description.strip() if med.description else None,
+            "side_effects": med.side_effects.strip() if med.side_effects else None,
+            "dosage": med.dosage.strip() if med.dosage else None,
+            "price": med.price,
+            "stock": med.stock,
+            "min_order_quantity": med.min_order_quantity
+        }
+        
+        res = supabase.table("medicines").insert(new_med).execute()
+        if not res.data or len(res.data) == 0:
+            raise HTTPException(status_code=500, detail="Failed to write product record to Supabase database.")
+            
+        return {"message": "Product created successfully", "data": res.data[0]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# 2. Update Medicine (PUT)
+@app.put("/api/medicines/{id}")
+def update_medicine(id: int, med: MedicineCreate):
+    try:
+        supabase = get_supabase_client()
+        
+        # Resolve or create salt
+        salt_res = supabase.table("salts").select("id").eq("name", med.salt_name.strip()).execute()
+        if salt_res.data and len(salt_res.data) > 0:
+            salt_id = salt_res.data[0]["id"]
+        else:
+            # Create new salt
+            new_salt = {"name": med.salt_name.strip()}
+            insert_salt_res = supabase.table("salts").insert(new_salt).execute()
+            if not insert_salt_res.data or len(insert_salt_res.data) == 0:
+                raise HTTPException(status_code=500, detail="Failed to register active salt ingredient.")
+            salt_id = insert_salt_res.data[0]["id"]
+
+        # Update medicine row
+        update_data = {
+            "salt_id": salt_id,
+            "name": med.name.strip(),
+            "image_url": med.image_url.strip() if med.image_url else None,
+            "composition": med.composition.strip() if med.composition else None,
+            "formulation": med.formulation.strip() if med.formulation else None,
+            "status": med.status.strip() if med.status else None,
+            "description": med.description.strip() if med.description else None,
+            "side_effects": med.side_effects.strip() if med.side_effects else None,
+            "dosage": med.dosage.strip() if med.dosage else None,
+            "price": med.price,
+            "stock": med.stock,
+            "min_order_quantity": med.min_order_quantity
+        }
+        
+        res = supabase.table("medicines").update(update_data).eq("id", id).execute()
+        if not res.data or len(res.data) == 0:
+            raise HTTPException(status_code=404, detail="Product not found or failed to update.")
+            
+        return {"message": "Product updated successfully", "data": res.data[0]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# 3. Delete Medicine (DELETE)
+@app.delete("/api/medicines/{id}")
+def delete_medicine(id: int):
+    try:
+        supabase = get_supabase_client()
+        res = supabase.table("medicines").delete().eq("id", id).execute()
+        if not res.data or len(res.data) == 0:
+            raise HTTPException(status_code=404, detail="Product not found or failed to delete.")
+        return {"message": "Product deleted successfully", "id": id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

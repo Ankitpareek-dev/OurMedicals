@@ -32,7 +32,7 @@ const slugify = (text) => {
     .trim()                         // Trim leading/trailing spaces
 }
 
-// E-commerce Categories
+// Categories list
 const CATEGORIES = [
   { name: "All Products", count: 1958, filter: "" },
   { name: "Tablets", count: 840, filter: "TABLETS" },
@@ -69,18 +69,26 @@ function Header({ theme, toggleTheme, cartCount }) {
   return (
     <nav className="sticky top-0 z-50 border-b border-neutral-200 dark:border-neutral-900 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Logo / Catalog Home Link */}
-        <Link to="/" className="flex items-center gap-3 cursor-pointer">
-          <div className="h-8 w-8 rounded-lg bg-brand-green flex items-center justify-center font-bold text-white shadow-lg shadow-brand-green/30">
-            M
+        {/* Logo */}
+        <div className="flex items-center gap-6">
+          <Link to="/" className="flex items-center gap-3 cursor-pointer">
+            <div className="h-8 w-8 rounded-lg bg-brand-green flex items-center justify-center font-bold text-white shadow-lg shadow-brand-green/30">
+              M
+            </div>
+            <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-neutral-950 to-neutral-600 dark:from-white dark:via-neutral-200 dark:to-neutral-500 bg-clip-text text-transparent">
+              Our Medicals
+            </span>
+          </Link>
+          
+          <div className="hidden md:flex items-center gap-4 border-l border-neutral-200 dark:border-neutral-900 pl-6 text-xs font-semibold">
+            <Link to="/" className="text-neutral-500 dark:text-neutral-400 hover:text-brand-green transition-colors">
+              Wholesale Store
+            </Link>
+            <Link to="/admin" className="text-neutral-505 hover:text-brand-green transition-colors">
+              Admin Portal
+            </Link>
           </div>
-          <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-neutral-950 to-neutral-600 dark:from-white dark:via-neutral-200 dark:to-neutral-500 bg-clip-text text-transparent">
-            Our Medicals
-          </span>
-          <span className="hidden sm:inline-block rounded-full bg-neutral-100 dark:bg-neutral-900 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-            Wholesale Store
-          </span>
-        </Link>
+        </div>
 
         {/* Nav Controls */}
         <div className="flex items-center gap-4">
@@ -337,7 +345,7 @@ function CatalogView({ onAddToCart, activeBanner, setActiveBanner, selectedCateg
         {/* Catalog Items Header */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-neutral-200 dark:border-neutral-900">
           <h2 className="text-lg font-bold text-neutral-900 dark:text-white">
-            {selectedCategory} <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400 ml-1">({loading ? '...' : total} results)</span>
+            {selectedCategory} <span className="text-xs font-normal text-neutral-505 ml-1">({loading ? '...' : total} results)</span>
           </h2>
           {searchQuery && (
             <Badge className="bg-brand-green/15 text-brand-green hover:bg-brand-green/20 border border-brand-green/20 px-2 py-1 flex items-center gap-1">
@@ -429,7 +437,7 @@ function CatalogView({ onAddToCart, activeBanner, setActiveBanner, selectedCateg
                       </CardHeader>
 
                       <CardContent className="p-0 mt-3">
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 min-h-[2rem]">
+                        <p className="text-xs text-neutral-505 line-clamp-2 min-h-[2rem]">
                           {med.composition}
                         </p>
                         <div className="mt-4 flex items-center gap-1.5">
@@ -466,7 +474,7 @@ function CatalogView({ onAddToCart, activeBanner, setActiveBanner, selectedCateg
 
                         <Button
                           onClick={(e) => {
-                            e.preventDefault(); // Prevent navigating to route when clicking the button!
+                            e.preventDefault();
                             onAddToCart(e, 1);
                           }}
                           className="mt-4 w-full cursor-pointer rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-850 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 py-2 text-xs font-bold dark:text-neutral-300 dark:hover:bg-brand-green dark:hover:text-white dark:hover:border-brand-green transition-all duration-200 shadow-none"
@@ -516,7 +524,7 @@ function CatalogView({ onAddToCart, activeBanner, setActiveBanner, selectedCateg
   )
 }
 
-/* ================= MEDICINE DETAIL VIEW (INDIVIDUAL URL PAGE) ================= */
+/* ================= MEDICINE DETAIL VIEW ================= */
 function MedicineDetailView({ onAddToCart }) {
   const { category, slug } = useParams()
   const navigate = useNavigate()
@@ -530,13 +538,11 @@ function MedicineDetailView({ onAddToCart }) {
   const [relatedProducts, setRelatedProducts] = useState([])
   const [loadingRelated, setLoadingRelated] = useState(false)
 
-  // Fetch product detail using the URL slug by converting it back into a search query
   useEffect(() => {
     const fetchProductDetails = async () => {
       setLoading(true)
       setError('')
       try {
-        // Convert slug hyphens to spaces to query in DB search API
         const searchQuery = slug.split('-').join(' ')
         const url = `http://127.0.0.1:8000/api/medicines?page=1&page_size=20&search=${encodeURIComponent(searchQuery)}`
         
@@ -552,15 +558,12 @@ function MedicineDetailView({ onAddToCart }) {
         }
 
         const data = await response.json()
-        
-        // Find exact slug matches from list to avoid broad partial matches
         const exactMatch = (data.data || []).find(item => slugify(item.name) === slug)
         
         if (exactMatch) {
           setMedicine(exactMatch)
           setOrderQuantity(exactMatch.min_order_quantity || 10)
         } else if (data.data && data.data.length > 0) {
-          // Fallback to first result if exact slug match isn't found
           setMedicine(data.data[0])
           setOrderQuantity(data.data[0].min_order_quantity || 10)
         } else {
@@ -577,7 +580,6 @@ function MedicineDetailView({ onAddToCart }) {
     fetchProductDetails()
   }, [slug, isSignedIn])
 
-  // Fetch related products based on active medicine's formulation category
   useEffect(() => {
     if (!medicine) return
     const fetchRelated = async () => {
@@ -611,7 +613,7 @@ function MedicineDetailView({ onAddToCart }) {
     return (
       <div className="flex flex-col items-center justify-center py-32 max-w-7xl mx-auto px-4">
         <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-green/20 border-t-brand-green" />
-        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-4">Retrieving formulation record...</p>
+        <p className="text-xs text-neutral-505 mt-4">Retrieving formulation record...</p>
       </div>
     )
   }
@@ -620,7 +622,7 @@ function MedicineDetailView({ onAddToCart }) {
     return (
       <div className="max-w-xl mx-auto my-16 p-8 border border-neutral-200 dark:border-neutral-900 rounded-3xl text-center bg-white dark:bg-neutral-900/20 shadow-xs">
         <h2 className="text-xl font-bold text-red-500">{error || "Product Not Found"}</h2>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">
+        <p className="text-sm text-neutral-550 mt-2">
           The requested medicine slug does not exist or has been removed from catalog listings.
         </p>
         <Button onClick={() => navigate('/')} className="mt-6 rounded-xl bg-brand-green hover:bg-brand-green-hover text-white">
@@ -632,9 +634,8 @@ function MedicineDetailView({ onAddToCart }) {
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
-      {/* Breadcrumb Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-neutral-200 dark:border-neutral-900">
-        <div className="flex items-center gap-2 text-xs text-neutral-505 dark:text-neutral-400">
+        <div className="flex items-center gap-2 text-xs text-neutral-550">
           <Link to="/" className="hover:text-brand-green transition">Catalog</Link>
           <span>/</span>
           <span className="capitalize">{category.replace(/-/g, ' ')}</span>
@@ -654,12 +655,8 @@ function MedicineDetailView({ onAddToCart }) {
         </Button>
       </div>
 
-      {/* Product Content Details */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-        
-        {/* LEFT COLUMN: Media Showcase & Wholesale Specs (5 Columns) */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-          
           <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 flex items-center justify-center overflow-hidden h-[360px] relative">
             {medicine.image_url ? (
               <img
@@ -684,14 +681,14 @@ function MedicineDetailView({ onAddToCart }) {
           <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6">
             <div className="flex items-end justify-between border-b border-neutral-200 dark:border-neutral-900/80 pb-4 mb-5">
               <div>
-                <span className="text-[10px] text-neutral-400 dark:text-neutral-500 font-bold uppercase tracking-wider block">Wholesale Price</span>
+                <span className="text-[10px] text-neutral-400 dark:text-neutral-505 font-bold uppercase tracking-wider block">Wholesale Price</span>
                 <span className="text-3xl font-extrabold text-neutral-900 dark:text-white mt-1 block">
                   ${medicine.price.toFixed(2)}
-                  <span className="text-xs font-normal text-neutral-400 dark:text-neutral-500 ml-1">/ unit</span>
+                  <span className="text-xs font-normal text-neutral-550 ml-1">/ unit</span>
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-[10px] text-neutral-400 dark:text-neutral-500 font-bold uppercase tracking-wider block">Availability</span>
+                <span className="text-[10px] text-neutral-400 dark:text-neutral-505 font-bold uppercase tracking-wider block">Availability</span>
                 <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 mt-1 block">
                   {medicine.stock} units in stock
                 </span>
@@ -722,7 +719,7 @@ function MedicineDetailView({ onAddToCart }) {
                 </div>
               </div>
 
-              <div className="text-[10px] text-neutral-400 dark:text-neutral-500 italic pl-1 flex items-center justify-between">
+              <div className="text-[10px] text-neutral-400 dark:text-neutral-505 italic pl-1 flex items-center justify-between">
                 <span>* Minimum Order Quantity: {medicine.min_order_quantity || 10} units</span>
                 <span>Total: ${(medicine.price * orderQuantity).toFixed(2)}</span>
               </div>
@@ -736,7 +733,7 @@ function MedicineDetailView({ onAddToCart }) {
                 </Button>
                 <Button 
                   variant="outline"
-                  className="rounded-xl border-neutral-300 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900 font-bold text-xs py-6"
+                  className="rounded-xl border-neutral-300 dark:border-neutral-850 hover:bg-neutral-100 dark:hover:bg-neutral-900 font-bold text-xs py-6"
                 >
                   Request Quote
                 </Button>
@@ -745,7 +742,6 @@ function MedicineDetailView({ onAddToCart }) {
           </Card>
         </div>
 
-        {/* RIGHT COLUMN: Medical Profiles & Monographs (7 Columns) */}
         <div className="lg:col-span-7 flex flex-col gap-6">
           <div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-neutral-900 dark:text-white tracking-tight">{medicine.name}</h1>
@@ -754,7 +750,7 @@ function MedicineDetailView({ onAddToCart }) {
 
           <div className="bg-white dark:bg-neutral-900/10 border border-neutral-200 dark:border-neutral-900 rounded-3xl p-6 sm:p-8 flex flex-col gap-6">
             <div>
-              <h3 className="text-sm font-bold text-neutral-950 dark:text-white border-b border-neutral-200 dark:border-neutral-900 pb-2 mb-3">
+              <h3 className="text-sm font-bold text-neutral-955 dark:text-white border-b border-neutral-200 dark:border-neutral-900 pb-2 mb-3">
                 Active Composition
               </h3>
               <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed bg-neutral-100/50 dark:bg-neutral-950/40 p-4 rounded-xl border border-neutral-200 dark:border-neutral-900">
@@ -763,7 +759,7 @@ function MedicineDetailView({ onAddToCart }) {
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-neutral-950 dark:text-white border-b border-neutral-200 dark:border-neutral-900 pb-2 mb-3">
+              <h3 className="text-sm font-bold text-neutral-955 dark:text-white border-b border-neutral-200 dark:border-neutral-900 pb-2 mb-3">
                 Product Monograph / Description
               </h3>
               <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
@@ -777,7 +773,7 @@ function MedicineDetailView({ onAddToCart }) {
                   <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
                   Side Effects profile
                 </h4>
-                <p className="text-xs text-red-500/80 dark:text-red-400/80 leading-relaxed">
+                <p className="text-xs text-red-505 leading-relaxed">
                   {medicine.side_effects || "No adverse events reported for the general formulation in compliance trials."}
                 </p>
               </div>
@@ -793,24 +789,24 @@ function MedicineDetailView({ onAddToCart }) {
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-neutral-950 dark:text-white border-b border-neutral-200 dark:border-neutral-900 pb-2 mb-3">
+              <h3 className="text-sm font-bold text-neutral-955 dark:text-white border-b border-neutral-200 dark:border-neutral-900 pb-2 mb-3">
                 Regulatory Compliance & Batch Details
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
                 <div className="bg-neutral-100/50 dark:bg-neutral-950/20 p-3 rounded-lg text-center">
-                  <span className="text-neutral-400 dark:text-neutral-500 text-[10px] uppercase font-semibold">Origin</span>
+                  <span className="text-neutral-450 dark:text-neutral-500 text-[10px] uppercase font-semibold">Origin</span>
                   <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-1">Batch Certified</span>
                 </div>
                 <div className="bg-neutral-100/50 dark:bg-neutral-950/20 p-3 rounded-lg text-center">
-                  <span className="text-neutral-400 dark:text-neutral-500 text-[10px] uppercase font-semibold">Storage</span>
+                  <span className="text-neutral-450 dark:text-neutral-500 text-[10px] uppercase font-semibold">Storage</span>
                   <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-1">Below 25°C</span>
                 </div>
                 <div className="bg-neutral-100/50 dark:bg-neutral-950/20 p-3 rounded-lg text-center">
-                  <span className="text-neutral-400 dark:text-neutral-500 text-[10px] uppercase font-semibold">Standard</span>
+                  <span className="text-neutral-450 dark:text-neutral-500 text-[10px] uppercase font-semibold">Standard</span>
                   <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-1">GMP Compliant</span>
                 </div>
                 <div className="bg-neutral-100/50 dark:bg-neutral-950/20 p-3 rounded-lg text-center">
-                  <span className="text-neutral-400 dark:text-neutral-500 text-[10px] uppercase font-semibold">Scheduler</span>
+                  <span className="text-neutral-450 dark:text-neutral-500 text-[10px] uppercase font-semibold">Scheduler</span>
                   <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-1">Schedule H1</span>
                 </div>
               </div>
@@ -820,7 +816,7 @@ function MedicineDetailView({ onAddToCart }) {
 
       </div>
 
-      {/* Related products recommendation layer */}
+      {/* Related products */}
       <section className="mt-20 border-t border-neutral-200 dark:border-neutral-900 pt-12">
         <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-8">Related Formulations in Category</h3>
         
@@ -843,7 +839,7 @@ function MedicineDetailView({ onAddToCart }) {
                   to={`/${relatedCatSlug}/${relatedNameSlug}`}
                   className="block group"
                 >
-                  <Card className="h-full relative flex flex-col justify-between rounded-2xl border border-neutral-250 dark:border-neutral-900 bg-white/40 dark:bg-neutral-900/10 p-4 hover:shadow-md hover:border-neutral-350 dark:hover:border-neutral-800 transition-all duration-300 cursor-pointer">
+                  <Card className="h-full relative flex flex-col justify-between rounded-2xl border border-neutral-250 dark:border-neutral-900 bg-white/40 dark:bg-neutral-900/10 p-4 hover:shadow-md hover:border-neutral-350 dark:hover:border-neutral-850 transition-all duration-300 cursor-pointer">
                     <div className="flex gap-4">
                       <div className="h-20 w-20 shrink-0 rounded-xl bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 flex items-center justify-center p-2 overflow-hidden">
                         {relatedMed.image_url ? (
@@ -853,7 +849,7 @@ function MedicineDetailView({ onAddToCart }) {
                             className="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-300"
                           />
                         ) : (
-                          <div className="text-[9px] text-neutral-505 font-mono">No Image</div>
+                          <div className="text-[9px] text-neutral-555 font-mono">No Image</div>
                         )}
                       </div>
                       
@@ -872,7 +868,7 @@ function MedicineDetailView({ onAddToCart }) {
                       </div>
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-neutral-100 dark:border-neutral-900/60 flex items-center justify-between text-[10px] text-neutral-500">
+                    <div className="mt-4 pt-3 border-t border-neutral-100 dark:border-neutral-900/60 flex items-center justify-between text-[10px] text-neutral-550">
                       <span>MOQ: {relatedMed.min_order_quantity || 10}</span>
                       <span className="font-bold text-emerald-500">{relatedMed.stock} in stock</span>
                     </div>
@@ -887,7 +883,451 @@ function MedicineDetailView({ onAddToCart }) {
   )
 }
 
-/* ================= MAIN APP CONTAINER (ROUTER WRAPPER) ================= */
+/* ================= ADMIN VIEW PANEL (CRUD CAPABILITIES) ================= */
+function AdminView() {
+  const navigate = useNavigate()
+  const { getToken, isSignedIn } = useAuth()
+  
+  const [medicines, setMedicines] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [submitLoading, setSubmitLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
+  
+  // Dashboard Metrics state
+  const [metrics, setMetrics] = useState({
+    totalCount: 0,
+    lowStockCount: 0,
+    outOfStockCount: 0,
+    avgPrice: 0
+  })
+
+  // CRUD Form State
+  const [isEditing, setIsEditing] = useState(false)
+  const [formMedId, setFormMedId] = useState(null)
+  const [formFields, setFormFields] = useState({
+    name: '',
+    salt_name: '',
+    formulation: 'TABLETS',
+    status: 'OTC PRODUCT',
+    price: 9.99,
+    stock: 100,
+    min_order_quantity: 10,
+    image_url: '',
+    composition: '',
+    description: '',
+    side_effects: '',
+    dosage: ''
+  })
+
+  // Fetch all medicines for table (using page size 100 for admin overview list)
+  const fetchAdminCatalog = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const url = `http://127.0.0.1:8000/api/medicines?page=1&page_size=100`
+      const token = isSignedIn ? await getToken() : null
+      
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : 'Bearer mock-token-for-local-dev'
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error('API error reading catalog')
+      }
+
+      const data = await response.json()
+      const list = data.data || []
+      setMedicines(list)
+      
+      // Calculate Metrics
+      const total = data.total || list.length
+      const lowStock = list.filter(item => item.stock > 0 && item.stock < 100).length
+      const outOfStock = list.filter(item => item.stock <= 0).length
+      const sumPrice = list.reduce((sum, item) => sum + item.price, 0)
+      const avg = list.length > 0 ? (sumPrice / list.length) : 0
+
+      setMetrics({
+        totalCount: total,
+        lowStockCount: lowStock,
+        outOfStockCount: outOfStock,
+        avgPrice: avg
+      })
+    } catch (err) {
+      console.error(err)
+      setError('Failed to sync admin catalog from backend API.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchAdminCatalog()
+  }, [isSignedIn])
+
+  const handleEditClick = (med) => {
+    setIsEditing(true)
+    setFormMedId(med.id)
+    setFormFields({
+      name: med.name,
+      salt_name: med.salt_name,
+      formulation: med.formulation || 'TABLETS',
+      status: med.status || 'OTC PRODUCT',
+      price: med.price,
+      stock: med.stock,
+      min_order_quantity: med.min_order_quantity || 10,
+      image_url: med.image_url || '',
+      composition: med.composition || '',
+      description: med.description || '',
+      side_effects: med.side_effects || '',
+      dosage: med.dosage || ''
+    })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleAddNewClick = () => {
+    setIsEditing(true)
+    setFormMedId(null)
+    setFormFields({
+      name: '',
+      salt_name: '',
+      formulation: 'TABLETS',
+      status: 'OTC PRODUCT',
+      price: 9.99,
+      stock: 100,
+      min_order_quantity: 10,
+      image_url: '',
+      composition: '',
+      description: '',
+      side_effects: '',
+      dosage: ''
+    })
+  }
+
+  const handleCancelForm = () => {
+    setIsEditing(false)
+    setFormMedId(null)
+  }
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target
+    setFormFields(prev => ({
+      ...prev,
+      [name]: (name === 'price' || name === 'stock' || name === 'min_order_quantity')
+        ? Number(value)
+        : value
+    }))
+  }
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault()
+    setSubmitLoading(true)
+    setError('')
+    setSuccessMsg('')
+
+    try {
+      const url = formMedId 
+        ? `http://127.0.0.1:8000/api/medicines/${formMedId}`
+        : `http://127.0.0.1:8000/api/medicines`
+      
+      const method = formMedId ? 'PUT' : 'POST'
+      const token = isSignedIn ? await getToken() : null
+
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : 'Bearer mock-token-for-local-dev'
+        },
+        body: JSON.stringify(formFields)
+      })
+
+      if (!response.ok) {
+        throw new Error('API save operation failed')
+      }
+
+      setSuccessMsg(formMedId ? 'Product record updated successfully!' : 'New product created successfully!')
+      setIsEditing(false)
+      setFormMedId(null)
+      fetchAdminCatalog()
+    } catch (err) {
+      console.error(err)
+      setError('Failed to submit product changes to database.')
+    } finally {
+      setSubmitLoading(false)
+    }
+  }
+
+  const handleDeleteClick = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this medicine? This action cannot be undone.")) return
+    setError('')
+    setSuccessMsg('')
+    try {
+      const url = `http://127.0.0.1:8000/api/medicines/${id}`
+      const token = isSignedIn ? await getToken() : null
+
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : 'Bearer mock-token-for-local-dev'
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete product record')
+      }
+
+      setSuccessMsg('Product deleted successfully from catalog database.')
+      fetchAdminCatalog()
+    } catch (err) {
+      console.error(err)
+      setError('Could not delete product record from backend.')
+    }
+  }
+
+  return (
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+      
+      {/* Header section */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-neutral-200 dark:border-neutral-900">
+        <div>
+          <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">Admin Management Portal</h1>
+          <p className="text-xs text-neutral-500 mt-1.5">Create, edit, delete, and monitor medical inventory stocks.</p>
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={() => navigate('/')} variant="outline" className="rounded-xl border-neutral-250 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900">
+            View Storefront
+          </Button>
+          {!isEditing && (
+            <Button onClick={handleAddNewClick} className="rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold">
+              Add New Medicine
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Success / Error notification */}
+      {successMsg && (
+        <div className="mb-6 p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
+          {successMsg}
+        </div>
+      )}
+      {error && (
+        <div className="mb-6 p-4 rounded-xl border border-red-500/20 bg-red-500/10 text-red-650 font-bold text-xs">
+          {error}
+        </div>
+      )}
+
+      {/* Admin CRUD edit form pane */}
+      {isEditing && (
+        <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 sm:p-8 mb-8 shadow-md">
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-6">
+            {formMedId ? `Edit Medicine Detail (ID: ${formMedId})` : 'Create New Medicine Record'}
+          </h2>
+          
+          <form onSubmit={handleFormSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-neutral-500">Brand Name</label>
+              <Input required name="name" value={formFields.name} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-neutral-500">Active Salt Name</label>
+              <Input required name="salt_name" value={formFields.salt_name} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-neutral-500">Formulation Category</label>
+              <select
+                name="formulation"
+                value={formFields.formulation}
+                onChange={handleFormChange}
+                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-2.5 text-sm text-neutral-800 dark:text-neutral-200"
+              >
+                <option value="TABLETS">TABLETS</option>
+                <option value="CAPSULES">CAPSULES</option>
+                <option value="TOPICALS">TOPICALS</option>
+                <option value="ORTHO SUPPORT">ORTHO SUPPORT</option>
+                <option value="SURGICALS">SURGICALS</option>
+                <option value="LIQUIDS">LIQUIDS</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-neutral-500">Price ($)</label>
+              <Input required type="number" step="0.01" min="0.01" name="price" value={formFields.price} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-neutral-500">Stock Count</label>
+              <Input required type="number" min="0" name="stock" value={formFields.stock} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-neutral-500">Minimum Order Quantity (MOQ)</label>
+              <Input required type="number" min="1" name="min_order_quantity" value={formFields.min_order_quantity} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+            </div>
+
+            <div className="flex flex-col gap-2 lg:col-span-3">
+              <label className="text-xs font-bold text-neutral-500">Image URL</label>
+              <Input name="image_url" value={formFields.image_url} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+            </div>
+
+            <div className="flex flex-col gap-2 lg:col-span-3">
+              <label className="text-xs font-bold text-neutral-500">Chemical Composition Specification</label>
+              <textarea
+                name="composition"
+                rows={2}
+                value={formFields.composition}
+                onChange={handleFormChange}
+                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-3 text-sm text-neutral-800 dark:text-neutral-200 outline-none focus:border-brand-green"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2 lg:col-span-3">
+              <label className="text-xs font-bold text-neutral-500">Product Monograph (Description)</label>
+              <textarea
+                name="description"
+                rows={3}
+                value={formFields.description}
+                onChange={handleFormChange}
+                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-3 text-sm text-neutral-800 dark:text-neutral-200 outline-none focus:border-brand-green"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-neutral-500">Observed Side Effects</label>
+              <Input name="side_effects" value={formFields.side_effects} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-neutral-500">Standard Dosage Instruction</label>
+              <Input name="dosage" value={formFields.dosage} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-neutral-500">Prescription Status Warning</label>
+              <select
+                name="status"
+                value={formFields.status}
+                onChange={handleFormChange}
+                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-2.5 text-sm text-neutral-800 dark:text-neutral-200"
+              >
+                <option value="OTC PRODUCT">OTC PRODUCT</option>
+                <option value="PRESCRIPTION ONLY DRUG">PRESCRIPTION ONLY DRUG</option>
+                <option value="SCHEDULE H1 WARNING">SCHEDULE H1 WARNING</option>
+              </select>
+            </div>
+
+            <div className="flex gap-2 lg:col-span-3 justify-end mt-4">
+              <Button type="button" variant="outline" onClick={handleCancelForm} className="rounded-xl cursor-pointer">
+                Cancel
+              </Button>
+              <Button type="submit" disabled={submitLoading} className="rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold cursor-pointer px-6">
+                {submitLoading ? 'Saving...' : 'Save Product Record'}
+              </Button>
+            </div>
+
+          </form>
+        </Card>
+      )}
+
+      {/* Metrics overview card list */}
+      <section className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+        <Card className="rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-5">
+          <span className="text-[10px] uppercase font-bold text-neutral-400">Total Catalog</span>
+          <span className="text-2xl font-extrabold text-neutral-900 dark:text-white block mt-1">{metrics.totalCount} items</span>
+        </Card>
+        <Card className="rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-5">
+          <span className="text-[10px] uppercase font-bold text-neutral-400">Low Stock Alert</span>
+          <span className="text-2xl font-extrabold text-amber-500 block mt-1">{metrics.lowStockCount} items</span>
+        </Card>
+        <Card className="rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-5">
+          <span className="text-[10px] uppercase font-bold text-neutral-400">Out of Stock</span>
+          <span className="text-2xl font-extrabold text-red-500 block mt-1">{metrics.outOfStockCount} items</span>
+        </Card>
+        <Card className="rounded-2xl border border-neutral-200 dark:border-neutral-905 bg-white dark:bg-neutral-900/10 p-5">
+          <span className="text-[10px] uppercase font-bold text-neutral-400">Average Unit Price</span>
+          <span className="text-2xl font-extrabold text-brand-green block mt-1">${metrics.avgPrice.toFixed(2)}</span>
+        </Card>
+      </section>
+
+      {/* Catalog Table */}
+      <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 overflow-hidden">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold text-neutral-900 dark:text-white">Active Product Inventory ({medicines.length} in view)</h3>
+        </div>
+
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-green/20 border-t-brand-green" />
+            <p className="text-xs text-neutral-500 mt-3">Loading master records...</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-neutral-200 dark:border-neutral-900 text-neutral-450 uppercase font-bold">
+                  <th className="py-3 px-4">Brand Name</th>
+                  <th className="py-3 px-4">Active Salt</th>
+                  <th className="py-3 px-4">Formulation</th>
+                  <th className="py-3 px-4 text-right">Price</th>
+                  <th className="py-3 px-4 text-right">Stock</th>
+                  <th className="py-3 px-4 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-900/80">
+                {medicines.map((med) => (
+                  <tr key={med.id} className="hover:bg-neutral-100/30 dark:hover:bg-neutral-900/30 transition-colors">
+                    <td className="py-4 px-4 font-bold text-neutral-900 dark:text-white">{med.name}</td>
+                    <td className="py-4 px-4 text-neutral-500 font-semibold">{med.salt_name}</td>
+                    <td className="py-4 px-4">
+                      <Badge variant="outline" className="border-neutral-200 text-neutral-600 dark:text-neutral-400 dark:border-neutral-800 uppercase font-bold text-[9px]">
+                        {med.formulation}
+                      </Badge>
+                    </td>
+                    <td className="py-4 px-4 text-right font-bold text-neutral-800 dark:text-neutral-200">${med.price.toFixed(2)}</td>
+                    <td className={`py-4 px-4 text-right font-bold ${
+                      med.stock <= 0 ? 'text-red-500' : med.stock < 100 ? 'text-amber-500' : 'text-emerald-500'
+                    }`}>
+                      {med.stock}
+                    </td>
+                    <td className="py-4 px-4 text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditClick(med)}
+                          className="rounded-lg h-8 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-brand-green font-semibold text-neutral-500 dark:text-neutral-400"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteClick(med.id)}
+                          className="rounded-lg h-8 cursor-pointer hover:bg-red-500/10 text-red-500 font-semibold"
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+
+    </main>
+  )
+}
+
+/* ================= MAIN APP CONTAINER (ROUTER) ================= */
 export default function App() {
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -951,6 +1391,10 @@ export default function App() {
           <Route
             path="/:category/:slug"
             element={<MedicineDetailView onAddToCart={handleAddToCart} />}
+          />
+          <Route
+            path="/admin"
+            element={<AdminView />}
           />
         </Routes>
       </div>
