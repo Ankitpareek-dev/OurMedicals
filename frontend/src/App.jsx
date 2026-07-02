@@ -6,7 +6,7 @@ export default function App() {
   const [page, setPage] = useState(1)
   const [pages, setPages] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
-  const [searchQuery, setSearchQuery] = useState('') // Triggers fetch on submit
+  const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -17,13 +17,11 @@ export default function App() {
       setLoading(true)
       setError('')
       try {
-        // Build API URL
         let url = `http://127.0.0.1:8000/api/medicines?page=${page}&page_size=${pageSize}`
         if (searchQuery) {
           url += `&search=${encodeURIComponent(searchQuery)}`
         }
 
-        // Send fetch request with mock Auth token to satisfy backend middleware
         const response = await fetch(url, {
           headers: {
             'Authorization': 'Bearer mock-token-for-local-dev'
@@ -49,14 +47,12 @@ export default function App() {
     fetchMedicines()
   }, [page, searchQuery])
 
-  // Handle search submission
   const handleSearchSubmit = (e) => {
     e.preventDefault()
     setPage(1)
     setSearchQuery(searchTerm)
   }
 
-  // Handle search reset
   const handleClearSearch = () => {
     setSearchTerm('')
     setSearchQuery('')
@@ -168,7 +164,7 @@ export default function App() {
           <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-center max-w-xl mx-auto my-12">
             <p className="text-red-400 font-medium">{error}</p>
             <button
-              onClick={() => setPage(page)} // Retries fetch
+              onClick={() => setPage(page)}
               className="mt-4 inline-flex items-center gap-2 rounded-lg bg-red-600/20 px-4 py-2 text-xs font-semibold text-red-400 border border-red-500/30 hover:bg-red-600/30 transition"
             >
               Retry Connection
@@ -202,26 +198,45 @@ export default function App() {
               {medicines.map((med) => (
                 <article
                   key={med.id}
-                  className="group relative flex flex-col justify-between rounded-2xl border border-neutral-900 bg-neutral-900/30 p-5 hover:bg-neutral-900/50 hover:border-neutral-800 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/[0.02]"
+                  className="group relative flex flex-col justify-between rounded-2xl border border-neutral-900 bg-neutral-900/20 p-4 hover:bg-neutral-900/40 hover:border-neutral-800 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/[0.02]"
                 >
                   <div>
-                    {/* Header: Name and Status badge */}
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-bold text-lg text-white group-hover:text-indigo-400 transition-colors duration-200">
-                        {med.name}
-                      </h3>
-                      <span className="rounded-full bg-neutral-900 px-2 py-0.5 text-[10px] font-semibold text-neutral-400 border border-neutral-800 uppercase tracking-wider shrink-0">
+                    {/* Visual Product Image Container */}
+                    <div className="relative w-full h-44 rounded-xl bg-neutral-950 border border-neutral-900 flex items-center justify-center overflow-hidden mb-4 p-4 group-hover:border-neutral-800 transition-colors">
+                      {med.image_url ? (
+                        <img
+                          src={med.image_url}
+                          alt={med.name}
+                          loading="lazy"
+                          className="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://placehold.co/200x200/18181b/ffffff?text=Medicine';
+                          }}
+                        />
+                      ) : (
+                        <div className="text-neutral-600 text-xs font-mono">No Image Available</div>
+                      )}
+                      
+                      {/* Floating Formulation Badge overlay */}
+                      <span className="absolute top-2 right-2 rounded-lg bg-neutral-950/80 px-2 py-0.5 text-[9px] font-bold text-neutral-300 border border-neutral-800/80 uppercase tracking-wider backdrop-blur-xs">
                         {med.formulation}
                       </span>
                     </div>
 
-                    {/* Active Salt Info */}
-                    <div className="mt-2 text-xs font-semibold text-indigo-400 tracking-wider">
+                    {/* Header: Name and Salt Info */}
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-bold text-base text-white group-hover:text-indigo-400 transition-colors duration-200 line-clamp-1">
+                        {med.name}
+                      </h3>
+                    </div>
+
+                    <div className="mt-1 text-xs font-semibold text-indigo-400 tracking-wider line-clamp-1">
                       {med.salt_name}
                     </div>
 
                     {/* Composition details */}
-                    <p className="mt-3 text-xs text-neutral-400 line-clamp-2">
+                    <p className="mt-3 text-xs text-neutral-400 line-clamp-2 min-h-[2rem]">
                       {med.composition}
                     </p>
 
@@ -235,33 +250,35 @@ export default function App() {
                   </div>
 
                   {/* Pricing and Action Footer */}
-                  <div className="mt-6 pt-4 border-t border-neutral-900/80 flex items-center justify-between">
-                    <div>
-                      <div className="text-[10px] text-neutral-500 font-semibold uppercase tracking-wider">
-                        Wholesale Price
+                  <div>
+                    <div className="mt-5 pt-4 border-t border-neutral-900 flex items-center justify-between">
+                      <div>
+                        <div className="text-[9px] text-neutral-500 font-semibold uppercase tracking-wider">
+                          Wholesale Price
+                        </div>
+                        <div className="text-lg font-bold text-white mt-0.5">
+                          ${med.price.toFixed(2)}
+                        </div>
                       </div>
-                      <div className="text-xl font-bold text-white mt-0.5">
-                        ${med.price.toFixed(2)}
+                      <div className="text-right">
+                        <div className="text-[9px] text-neutral-500 font-semibold uppercase tracking-wider">
+                          Stock
+                        </div>
+                        <span
+                          className={`text-xs font-bold ${
+                            med.stock > 100 ? 'text-emerald-400' : 'text-amber-400'
+                          }`}
+                        >
+                          {med.stock} units
+                        </span>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-[10px] text-neutral-500 font-semibold uppercase tracking-wider">
-                        Stock
-                      </div>
-                      <span
-                        className={`text-xs font-bold ${
-                          med.stock > 100 ? 'text-emerald-400' : 'text-amber-400'
-                        }`}
-                      >
-                        {med.stock} units
-                      </span>
-                    </div>
-                  </div>
 
-                  {/* Add to order quick button */}
-                  <button className="mt-4 w-full cursor-pointer rounded-xl bg-neutral-900 border border-neutral-800 py-2.5 text-xs font-bold text-neutral-300 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-200">
-                    Add to wholesale order
-                  </button>
+                    {/* Add to order quick button */}
+                    <button className="mt-4 w-full cursor-pointer rounded-xl bg-neutral-900 border border-neutral-800 py-2.5 text-xs font-bold text-neutral-300 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-200">
+                      Add to wholesale order
+                    </button>
+                  </div>
                 </article>
               ))}
             </div>
