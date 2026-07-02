@@ -31,6 +31,7 @@ def seed_database():
     print("Processing salts and medicines...")
     salts_to_insert = set()
     raw_medicines = []
+    seen_medicine_names = set()
     
     # Extract unique salts and group medicines
     for letter_group in data:
@@ -42,8 +43,9 @@ def seed_database():
             
             for med in salt.get("medicines", []):
                 name = med.get("name", "").strip()
-                if not name:
+                if not name or name in seen_medicine_names:
                     continue
+                seen_medicine_names.add(name)
                 raw_medicines.append({
                     "salt_name": salt_name,
                     "name": name,
