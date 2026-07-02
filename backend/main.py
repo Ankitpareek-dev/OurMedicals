@@ -6,6 +6,7 @@ import jwt
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from typing import List, Optional
+from supabase import create_client, Client
 
 load_dotenv()
 
@@ -67,15 +68,6 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-# Simple models
-class MedicineResponse(BaseModel):
-    name: str
-    composition: str
-    formulation: str
-    status: str
-    price: float
-    stock: int
-
 # Routes
 @app.get("/")
 def read_root():
@@ -85,27 +77,80 @@ def read_root():
         "documentation": "/docs"
     }
 
-@app.get("/api/medicines", response_model=List[MedicineResponse])
-def get_medicines(current_user: dict = Depends(get_current_user)):
-    # Mock data return for local testing before database seeding is complete
-    return [
-        {
-            "name": "BRONCOFIL",
-            "composition": "Each hard gelatin capsule contains Acebrophylline 100 mg",
-            "formulation": "CAPSULES",
-            "status": "PRESCRIPTION ONLY DRUG",
-            "price": 12.50,
-            "stock": 500
-        },
-        {
-            "name": "VENPHYLIN",
-            "composition": "Each hard gelatin capsule contains Acebrophylline 100 mg",
-            "formulation": "CAPSULES",
-            "status": "PRESCRIPTION ONLY DRUG",
-            "price": 14.20,
-            "stock": 250
+@app.get("/api/medicines")
+def get_medicines(
+    page: int = 1,
+    page_size: int = 20,
+    search: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    if page < 1:
+        page = 1
+    if page_size < 1 or page_size > 100:
+        page_size = 20
+        
+    start = (page - 1) * page_size
+    end = start + page_size - 1
+
+    try:
+        supabase_url = os.getenv("SUPABASE_URL")
+        supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_KEY")
+        if not supabase_url or not supabase_key:
+            raise HTTPException(
+                status_code=500,
+                detail="Supabase credentials are not configured in the backend environment."
+            )
+        
+        supabase: Client = create_client(supabase_url, supabase_key)
+        
+        query = supabase.table("medicines").select("*, salts(name)", count="exact")
+        
+        if search:
+            # Clean search term to avoid issues and use PostgREST wildcard *
+            clean_search = search.strip().replace(",", " ").replace(".", " ").replace(";", " ")
+            query = query.or_(f"name.ilike.*{clean_search}*,composition.ilike.*{clean_search}*")
+            
+        res = query.range(start, end).order("name").execute()
+        
+        total_count = res.count if res.count is not None else 0
+        
+        # Format return data
+        formatted_data = []
+        for item in res.data:
+            salt_name = "Unknown"
+            if item.get("salts") and isinstance(item["salts"], dict):
+                salt_name = item["salts"].get("name", "Unknown")
+            elif item.get("salts") and isinstance(item["salts"], list) and len(item["salts"]) > 0:
+                salt_name = item["salts"][0].get("name", "Unknown")
+                
+            formatted_data.append({
+                "id": item["id"],
+                "name": item["name"],
+                "salt_name": salt_name,
+                "composition": item["composition"],
+                "formulation": item["formulation"],
+                "status": item["status"],
+                "price": float(item["price"]),
+                "stock": item["stock"],
+                "image_url": item["image_url"],
+                "description": item["description"],
+                "side_effects": item["side_effects"],
+                "dosage": item["dosage"],
+                "min_order_quantity": item["min_order_quantity"]
+            })
+            
+        return {
+            "total": total_count,
+            "page": page,
+            "page_size": page_size,
+            "pages": (total_count + page_size - 1) // page_size if total_count > 0 else 0,
+            "data": formatted_data
         }
-    ]
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Database query failed: {str(e)}"
+        )
 
 @app.get("/api/profile")
 def get_profile(current_user: dict = Depends(get_current_user)):
