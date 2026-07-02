@@ -918,6 +918,9 @@ function AdminView() {
   const [submitLoading, setSubmitLoading] = useState(false)
   const [error, setError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+  const [adminCategory, setAdminCategory] = useState("All Products")
+  const [adminSearch, setAdminSearch] = useState("")
+  const [adminSearchQuery, setAdminSearchQuery] = useState("")
   
   // Dashboard Metrics state
   const [metrics, setMetrics] = useState({
@@ -945,12 +948,23 @@ function AdminView() {
     dosage: ''
   })
 
-  // Fetch all medicines for table (using page size 100 for admin overview list)
+  // Fetch medicines for table filtered by category and search term
   const fetchAdminCatalog = async () => {
     setLoading(true)
     setError('')
     try {
-      const url = `http://127.0.0.1:8000/api/medicines?page=1&page_size=100`
+      let url = `http://127.0.0.1:8000/api/medicines?page=1&page_size=100`
+      
+      let combinedSearch = adminSearchQuery
+      const catObj = CATEGORIES.find(c => c.name === adminCategory)
+      if (catObj && catObj.filter) {
+        combinedSearch = combinedSearch ? `${combinedSearch} ${catObj.filter}` : catObj.filter
+      }
+
+      if (combinedSearch) {
+        url += `&search=${encodeURIComponent(combinedSearch)}`
+      }
+
       const token = isSignedIn ? await getToken() : null
       
       const response = await fetch(url, {
@@ -988,9 +1002,10 @@ function AdminView() {
     }
   }
 
+  // Refetch when category filter or search query updates
   useEffect(() => {
     fetchAdminCatalog()
-  }, [isSignedIn])
+  }, [isSignedIn, adminCategory, adminSearchQuery])
 
   const handleEditClick = (med) => {
     setIsEditing(true)
@@ -1282,8 +1297,61 @@ function AdminView() {
 
       {/* Catalog Table */}
       <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 overflow-hidden">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-neutral-900 dark:text-white">Active Product Inventory ({medicines.length} in view)</h3>
+        
+        {/* Table Filter / Controls bar */}
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-neutral-200 dark:border-neutral-900 pb-6 mb-6">
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white">Product Inventory</h3>
+            <span className="text-xs text-neutral-505 font-semibold bg-neutral-100 dark:bg-neutral-900 px-2 py-0.5 rounded-md">
+              {medicines.length} in view
+            </span>
+          </div>
+
+          {/* Admin Table Search Bar */}
+          <div className="w-full md:w-72 flex gap-2">
+            <div className="relative flex-grow flex items-center border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 px-2 py-1 rounded-xl focus-within:border-brand-green/50 transition">
+              <input
+                type="text"
+                placeholder="Search brand matching..."
+                value={adminSearch}
+                onChange={(e) => setAdminSearch(e.target.value)}
+                className="w-full bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 py-1.5 text-xs text-neutral-800 dark:text-neutral-200 outline-none"
+              />
+              {adminSearch && (
+                <button
+                  type="button"
+                  onClick={() => { setAdminSearch(""); setAdminSearchQuery(""); }}
+                  className="text-neutral-400 hover:text-neutral-900 text-xs px-1 cursor-pointer"
+                >
+                  &times;
+                </button>
+              )}
+            </div>
+            <Button
+              size="sm"
+              onClick={() => setAdminSearchQuery(adminSearch)}
+              className="bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold rounded-xl cursor-pointer"
+            >
+              Filter
+            </Button>
+          </div>
+        </div>
+
+        {/* Categories Pills Filters */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.name}
+              onClick={() => setAdminCategory(cat.name)}
+              className={`cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold border transition ${
+                adminCategory === cat.name
+                  ? 'bg-brand-green border-brand-green text-white shadow-xs'
+                  : 'bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-900 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900'
+              }`}
+            >
+              {cat.name}
+            </button>
+          ))}
         </div>
 
         {loading ? (
