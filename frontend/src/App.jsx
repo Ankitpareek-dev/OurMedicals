@@ -13,7 +13,8 @@ import {
   SignInButton,
   SignUpButton,
   UserButton,
-  useAuth
+  useAuth,
+  useUser
 } from '@clerk/clerk-react'
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -887,6 +888,46 @@ function MedicineDetailView({ onAddToCart }) {
 function AdminView() {
   const navigate = useNavigate()
   const { getToken, isSignedIn } = useAuth()
+  const { isLoaded, user } = useUser()
+
+  if (!isLoaded) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32 max-w-7xl mx-auto px-4">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-green/20 border-t-brand-green" />
+        <p className="text-xs text-neutral-555 mt-4">Verifying admin credentials...</p>
+      </div>
+    )
+  }
+
+  const isAdmin = isSignedIn && user?.publicMetadata?.role === 'admin'
+
+  if (!isAdmin) {
+    return (
+      <main className="max-w-xl mx-auto my-24 p-8 border border-neutral-200 dark:border-neutral-900 rounded-3xl text-center bg-white dark:bg-neutral-900/20 shadow-xs relative z-10">
+        <div className="h-12 w-12 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mx-auto mb-4">
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Access Denied</h2>
+        <p className="text-sm text-neutral-500 mt-3 leading-relaxed">
+          You must be logged in with an administrator account to view the management portal.
+        </p>
+        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <SignedOut>
+            <SignInButton mode="modal">
+              <Button className="rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold cursor-pointer">
+                Sign In as Admin
+              </Button>
+            </SignInButton>
+          </SignedOut>
+          <Button variant="outline" onClick={() => navigate('/')} className="rounded-xl border-neutral-200 dark:border-neutral-850 cursor-pointer">
+            Return to Store
+          </Button>
+        </div>
+      </main>
+    )
+  }
   
   const [medicines, setMedicines] = useState([])
   const [loading, setLoading] = useState(true)

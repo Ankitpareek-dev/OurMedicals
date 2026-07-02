@@ -68,6 +68,26 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+# Require admin role dependency
+def require_admin(current_user: dict = Depends(get_current_user)):
+    if not CLERK_JWKS_URL:
+        # Development mock user is admin
+        return current_user
+        
+    public_metadata = current_user.get("public_metadata", {})
+    role = public_metadata.get("role")
+    
+    # Also check direct payload if custom claims mapper maps it
+    if not role:
+        role = current_user.get("role")
+        
+    if role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access Denied: Admin privileges required."
+        )
+    return current_user
+
 # Routes
 @app.get("/")
 def read_root():
@@ -136,7 +156,7 @@ def get_medicines(
                 "side_effects": item["side_effects"],
                 "dosage": item["dosage"],
                 "min_order_quantity": item["min_order_quantity"]
-            })
+              })
             
         return {
             "total": total_count,
@@ -183,9 +203,9 @@ def get_supabase_client():
         )
     return create_client(supabase_url, supabase_key)
 
-# 1. Create Medicine (POST)
+# 1. Create Medicine (POST) - SECURED
 @app.post("/api/medicines", status_code=status.HTTP_201_CREATED)
-def create_medicine(med: MedicineCreate):
+def create_medicine(med: MedicineCreate, current_user: dict = Depends(require_admin)):
     try:
         supabase = get_supabase_client()
         
@@ -225,9 +245,9 @@ def create_medicine(med: MedicineCreate):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# 2. Update Medicine (PUT)
+# 2. Update Medicine (PUT) - SECURED
 @app.put("/api/medicines/{id}")
-def update_medicine(id: int, med: MedicineCreate):
+def update_medicine(id: int, med: MedicineCreate, current_user: dict = Depends(require_admin)):
     try:
         supabase = get_supabase_client()
         
@@ -267,9 +287,9 @@ def update_medicine(id: int, med: MedicineCreate):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# 3. Delete Medicine (DELETE)
+# 3. Delete Medicine (DELETE) - SECURED
 @app.delete("/api/medicines/{id}")
-def delete_medicine(id: int):
+def delete_medicine(id: int, current_user: dict = Depends(require_admin)):
     try:
         supabase = get_supabase_client()
         res = supabase.table("medicines").delete().eq("id", id).execute()
