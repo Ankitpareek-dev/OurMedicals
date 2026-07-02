@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 
 export default function App() {
   const [theme, setTheme] = useState(() => {
-    // Check local storage or system preference
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('theme')
       if (savedTheme) return savedTheme
@@ -23,7 +22,6 @@ export default function App() {
 
   const pageSize = 12
 
-  // Sync theme to document element
   useEffect(() => {
     const root = window.document.documentElement
     if (theme === 'dark') {
@@ -34,7 +32,6 @@ export default function App() {
     localStorage.setItem('theme', theme)
   }, [theme])
 
-  // Fetch medicines
   useEffect(() => {
     const fetchMedicines = async () => {
       setLoading(true)
@@ -87,10 +84,10 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-100 font-sans selection:bg-indigo-500 selection:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-100 font-sans selection:bg-brand-green selection:text-white transition-colors duration-300">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-indigo-500/5 dark:bg-indigo-500/5 blur-3xl" />
+        <div className="absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-brand-green/5 dark:bg-brand-green/5 blur-3xl" />
         <div className="absolute top-1/3 right-10 h-[600px] w-[600px] rounded-full bg-emerald-500/5 dark:bg-emerald-500/5 blur-3xl" />
       </div>
 
@@ -98,7 +95,7 @@ export default function App() {
       <nav className="sticky top-0 z-50 border-b border-neutral-200 dark:border-neutral-900 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-600/30">
+            <div className="h-8 w-8 rounded-lg bg-brand-green flex items-center justify-center font-bold text-white shadow-lg shadow-brand-green/30">
               M
             </div>
             <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-neutral-950 to-neutral-600 dark:from-white dark:via-neutral-200 dark:to-neutral-500 bg-clip-text text-transparent">
@@ -117,12 +114,10 @@ export default function App() {
               aria-label="Toggle light/dark mode"
             >
               {theme === 'dark' ? (
-                // Sun Icon (shows in dark mode to switch to light)
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m2.828 0l-.707-.707m12.02-12.02l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
                 </svg>
               ) : (
-                // Moon Icon (shows in light mode to switch to dark)
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                 </svg>
@@ -132,7 +127,7 @@ export default function App() {
             <button className="text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors duration-200 px-2">
               Help
             </button>
-            <button className="cursor-pointer rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-500 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+            <button className="cursor-pointer rounded-xl bg-brand-green px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-brand-green/20 hover:bg-brand-green-hover transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
               Client Portal
             </button>
           </div>
@@ -141,13 +136,13 @@ export default function App() {
 
       {/* Hero Section */}
       <header className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3.5 py-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 mb-6">
-          <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 dark:bg-indigo-400 animate-pulse" />
+        <div className="inline-flex items-center gap-2 rounded-full border border-brand-green/30 bg-brand-green/10 px-3.5 py-1 text-xs font-medium text-brand-green mb-6">
+          <span className="h-1.5 w-1.5 rounded-full bg-brand-green animate-pulse" />
           Secure B2B Medical Distribution
         </div>
         <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-neutral-900 dark:text-white max-w-3xl mx-auto leading-tight transition-colors">
           Next-Generation{' '}
-          <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 dark:from-indigo-400 dark:via-purple-400 dark:to-emerald-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-brand-green to-emerald-600 dark:from-brand-green dark:to-emerald-400 bg-clip-text text-transparent">
             Medical Wholesale
           </span>
         </h1>
@@ -157,7 +152,7 @@ export default function App() {
 
         {/* Global Catalog Search Bar */}
         <form onSubmit={handleSearchSubmit} className="mt-10 max-w-xl mx-auto">
-          <div className="relative flex items-center p-1.5 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white/90 dark:bg-neutral-900/50 backdrop-blur-xl shadow-2xl focus-within:border-indigo-500/50 focus-within:ring-2 focus-within:ring-indigo-500/10 transition-all duration-200">
+          <div className="relative flex items-center p-1.5 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white/90 dark:bg-neutral-900/50 backdrop-blur-xl shadow-2xl focus-within:border-brand-green/50 focus-within:ring-2 focus-within:ring-brand-green/10 transition-all duration-200">
             <input
               type="text"
               placeholder="Search by medicine name, salt formulation..."
@@ -169,14 +164,14 @@ export default function App() {
               <button
                 type="button"
                 onClick={handleClearSearch}
-                className="p-2 text-neutral-400 dark:text-neutral-500 hover:text-neutral-655 dark:hover:text-white text-sm cursor-pointer"
+                className="p-2 text-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-white text-sm cursor-pointer"
               >
                 Clear
               </button>
             )}
             <button
               type="submit"
-              className="cursor-pointer rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-500 transition-colors"
+              className="cursor-pointer rounded-xl bg-brand-green px-6 py-3 text-sm font-semibold text-white hover:bg-brand-green-hover transition-colors"
             >
               Search
             </button>
@@ -194,11 +189,11 @@ export default function App() {
             </p>
           </div>
           {searchQuery && (
-            <div className="mt-4 sm:mt-0 flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-lg text-sm text-indigo-600 dark:text-indigo-300">
+            <div className="mt-4 sm:mt-0 flex items-center gap-2 bg-brand-green/10 border border-brand-green/20 px-3 py-1.5 rounded-lg text-sm text-brand-green">
               Filtered by "{searchQuery}"
               <button
                 onClick={handleClearSearch}
-                className="font-bold hover:text-neutral-900 dark:hover:text-white ml-1 cursor-pointer"
+                className="font-bold hover:text-neutral-950 dark:hover:text-white ml-1 cursor-pointer"
               >
                 &times;
               </button>
@@ -222,7 +217,7 @@ export default function App() {
         {/* Loading Spinner */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500/20 border-t-indigo-500" />
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-green/20 border-t-brand-green" />
             <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-4">Loading wholesale catalog...</p>
           </div>
         ) : medicines.length === 0 ? (
@@ -273,12 +268,12 @@ export default function App() {
 
                     {/* Header: Name and Salt Info */}
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-bold text-base text-neutral-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200 line-clamp-1">
+                      <h3 className="font-bold text-base text-neutral-900 dark:text-white group-hover:text-brand-green transition-colors duration-200 line-clamp-1">
                         {med.name}
                       </h3>
                     </div>
 
-                    <div className="mt-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400 tracking-wider line-clamp-1">
+                    <div className="mt-1 text-xs font-semibold text-brand-green tracking-wider line-clamp-1">
                       {med.salt_name}
                     </div>
 
@@ -322,7 +317,7 @@ export default function App() {
                     </div>
 
                     {/* Add to order quick button */}
-                    <button className="mt-4 w-full cursor-pointer rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-850 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 py-2.5 text-xs font-bold dark:text-neutral-300 dark:hover:bg-indigo-600 dark:hover:text-white dark:hover:border-indigo-600 transition-all duration-200">
+                    <button className="mt-4 w-full cursor-pointer rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-850 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 py-2.5 text-xs font-bold dark:text-neutral-300 dark:hover:bg-brand-green dark:hover:text-white dark:hover:border-brand-green transition-all duration-200">
                       Add to wholesale order
                     </button>
                   </div>
