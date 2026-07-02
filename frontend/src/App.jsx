@@ -66,9 +66,10 @@ const PROMOTIONS = [
 ]
 
 /* ================= HEADER COMPONENT ================= */
-function Header({ theme, toggleTheme, cartCount }) {
+function Header({ theme, toggleTheme, cart }) {
   const { isSignedIn, user } = useUser()
   const isAdmin = isSignedIn && user?.publicMetadata?.role === 'admin'
+  const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0)
 
   return (
     <nav className="sticky top-0 z-50 border-b border-neutral-200 dark:border-neutral-900 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md transition-colors duration-300">
@@ -116,17 +117,17 @@ function Header({ theme, toggleTheme, cartCount }) {
             )}
           </Button>
 
-          {/* Shopping Cart Indicator */}
-          <div className="relative cursor-pointer p-2.5 rounded-xl border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
+          {/* Shopping Cart Link */}
+          <Link to="/cart" className="relative cursor-pointer p-2.5 rounded-xl border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            {cartCount > 0 && (
+            {cartItemCount > 0 && (
               <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-brand-green text-[10px] font-bold text-white flex items-center justify-center border border-white dark:border-neutral-950 animate-bounce">
-                {cartCount}
+                {cartItemCount}
               </span>
             )}
-          </div>
+          </Link>
 
           {/* Auth status buttons */}
           <div className="flex items-center gap-2 border-l border-neutral-200 dark:border-neutral-800 pl-4">
@@ -136,13 +137,14 @@ function Header({ theme, toggleTheme, cartCount }) {
                   Sign In
                 </Button>
               </SignInButton>
-              <SignUpButton mode="modal">
+            </SignedOut>
+            <SignUpButton mode="modal">
+              <SignedOut>
                 <Button className="cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white shadow-lg shadow-brand-green/20 font-semibold text-sm">
                   Register
                 </Button>
-              </SignUpButton>
-            </SignedOut>
-
+              </SignedOut>
+            </SignUpButton>
             <SignedIn>
               <span className="hidden md:inline-block text-[10px] uppercase tracking-wider font-extrabold text-brand-green bg-brand-green/10 border border-brand-green/20 px-2.5 py-1.5 rounded-lg mr-2">
                 Verified Pharmacist
@@ -381,7 +383,7 @@ function CatalogView({ onAddToCart, activeBanner, setActiveBanner, selectedCateg
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-green/20 border-t-brand-green" />
-            <p className="text-xs text-neutral-505 mt-4">Syncing wholesale pricing...</p>
+            <p className="text-xs text-neutral-550 mt-4">Syncing wholesale pricing...</p>
           </div>
         ) : medicines.length === 0 ? (
           <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/20 p-16 text-center max-w-md mx-auto my-12 shadow-xs">
@@ -405,12 +407,11 @@ function CatalogView({ onAddToCart, activeBanner, setActiveBanner, selectedCateg
                 const nameSlug = slugify(med.name)
                 
                 return (
-                  <Link
+                  <Card 
                     key={med.id}
-                    to={`/${categorySlug}/${nameSlug}`}
-                    className="block group"
+                    className="group relative flex flex-col justify-between rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/20 p-4 hover:shadow-lg dark:hover:bg-neutral-900/40 hover:border-neutral-350 dark:hover:border-neutral-800 transition-all duration-300"
                   >
-                    <Card className="h-full relative flex flex-col justify-between rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/20 p-4 hover:shadow-lg dark:hover:bg-neutral-900/40 hover:border-neutral-350 dark:hover:border-neutral-800 transition-all duration-300 cursor-pointer">
+                    <Link to={`/${categorySlug}/${nameSlug}`} className="block">
                       <CardHeader className="p-0">
                         <div className="relative w-full h-44 rounded-xl bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 flex items-center justify-center overflow-hidden mb-4 p-4 transition-colors">
                           {med.image_url ? (
@@ -443,7 +444,7 @@ function CatalogView({ onAddToCart, activeBanner, setActiveBanner, selectedCateg
                       </CardHeader>
 
                       <CardContent className="p-0 mt-3">
-                        <p className="text-xs text-neutral-505 line-clamp-2 min-h-[2rem]">
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 min-h-[2rem]">
                           {med.composition}
                         </p>
                         <div className="mt-4 flex items-center gap-1.5">
@@ -453,43 +454,43 @@ function CatalogView({ onAddToCart, activeBanner, setActiveBanner, selectedCateg
                           </span>
                         </div>
                       </CardContent>
+                    </Link>
 
-                      <CardFooter className="p-0 flex flex-col mt-5">
-                        <div className="w-full pt-4 border-t border-neutral-100 dark:border-neutral-900/80 flex items-center justify-between">
-                          <div>
-                            <div className="text-[9px] text-neutral-400 dark:text-neutral-500 font-semibold uppercase tracking-wider">
-                              Wholesale Price
-                            </div>
-                            <div className="text-lg font-bold text-neutral-900 dark:text-white mt-0.5">
-                              ${med.price.toFixed(2)}
-                            </div>
+                    <CardFooter className="p-0 flex flex-col mt-5">
+                      <div className="w-full pt-4 border-t border-neutral-100 dark:border-neutral-900/80 flex items-center justify-between">
+                        <div>
+                          <div className="text-[9px] text-neutral-400 dark:text-neutral-500 font-semibold uppercase tracking-wider">
+                            Wholesale Price
                           </div>
-                          <div className="text-right">
-                            <div className="text-[9px] text-neutral-400 dark:text-neutral-500 font-semibold uppercase tracking-wider">
-                              Stock
-                            </div>
-                            <span
-                              className={`text-xs font-bold ${
-                                med.stock > 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'
-                              }`}
-                            >
-                              {med.stock} units
-                            </span>
+                          <div className="text-lg font-bold text-neutral-900 dark:text-white mt-0.5">
+                            ${med.price.toFixed(2)}
                           </div>
                         </div>
+                        <div className="text-right">
+                          <div className="text-[9px] text-neutral-400 dark:text-neutral-500 font-semibold uppercase tracking-wider">
+                            Stock
+                          </div>
+                          <span
+                            className={`text-xs font-bold ${
+                              med.stock > 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'
+                            }`}
+                          >
+                            {med.stock} units
+                          </span>
+                        </div>
+                      </div>
 
-                        <Button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            onAddToCart(e, 1);
-                          }}
-                          className="mt-4 w-full cursor-pointer rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-850 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 py-2 text-xs font-bold dark:text-neutral-300 dark:hover:bg-brand-green dark:hover:text-white dark:hover:border-brand-green transition-all duration-200 shadow-none"
-                        >
-                          Add to wholesale order
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </Link>
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onAddToCart(med, 1);
+                        }}
+                        className="mt-4 w-full cursor-pointer rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-850 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 py-2 text-xs font-bold dark:text-neutral-300 dark:hover:bg-brand-green dark:hover:text-white dark:hover:border-brand-green transition-all duration-200 shadow-none"
+                      >
+                        Add to wholesale order
+                      </Button>
+                    </CardFooter>
+                  </Card>
                 )
               })}
             </div>
@@ -732,14 +733,14 @@ function MedicineDetailView({ onAddToCart }) {
 
               <div className="flex flex-col sm:flex-row gap-3 mt-2">
                 <Button
-                  onClick={(e) => onAddToCart(e, orderQuantity)}
+                  onClick={() => onAddToCart(medicine, orderQuantity)}
                   className="cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs py-6 flex-grow shadow-lg shadow-brand-green/20"
                 >
                   Add to wholesale order
                 </Button>
                 <Button 
                   variant="outline"
-                  className="rounded-xl border-neutral-300 dark:border-neutral-850 hover:bg-neutral-100 dark:hover:bg-neutral-900 font-bold text-xs py-6"
+                  className="rounded-xl border-neutral-300 dark:border-brand-green hover:bg-neutral-100 dark:hover:bg-neutral-900 font-bold text-xs py-6"
                 >
                   Request Quote
                 </Button>
@@ -800,19 +801,19 @@ function MedicineDetailView({ onAddToCart }) {
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
                 <div className="bg-neutral-100/50 dark:bg-neutral-950/20 p-3 rounded-lg text-center">
-                  <span className="text-neutral-450 dark:text-neutral-500 text-[10px] uppercase font-semibold">Origin</span>
+                  <span className="text-neutral-455 dark:text-neutral-500 text-[10px] uppercase font-semibold">Origin</span>
                   <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-1">Batch Certified</span>
                 </div>
                 <div className="bg-neutral-100/50 dark:bg-neutral-950/20 p-3 rounded-lg text-center">
-                  <span className="text-neutral-450 dark:text-neutral-500 text-[10px] uppercase font-semibold">Storage</span>
+                  <span className="text-neutral-455 dark:text-neutral-500 text-[10px] uppercase font-semibold">Storage</span>
                   <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-1">Below 25°C</span>
                 </div>
                 <div className="bg-neutral-100/50 dark:bg-neutral-950/20 p-3 rounded-lg text-center">
-                  <span className="text-neutral-450 dark:text-neutral-500 text-[10px] uppercase font-semibold">Standard</span>
+                  <span className="text-neutral-455 dark:text-neutral-500 text-[10px] uppercase font-semibold">Standard</span>
                   <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-1">GMP Compliant</span>
                 </div>
                 <div className="bg-neutral-100/50 dark:bg-neutral-950/20 p-3 rounded-lg text-center">
-                  <span className="text-neutral-450 dark:text-neutral-500 text-[10px] uppercase font-semibold">Scheduler</span>
+                  <span className="text-neutral-455 dark:text-neutral-500 text-[10px] uppercase font-semibold">Scheduler</span>
                   <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-1">Schedule H1</span>
                 </div>
               </div>
@@ -829,10 +830,10 @@ function MedicineDetailView({ onAddToCart }) {
         {loadingRelated ? (
           <div className="flex items-center gap-2 justify-center py-12">
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-brand-green/20 border-t-brand-green" />
-            <span className="text-xs text-neutral-505">Finding related stocks...</span>
+            <span className="text-xs text-neutral-555">Finding related stocks...</span>
           </div>
         ) : relatedProducts.length === 0 ? (
-          <p className="text-xs text-neutral-505">No other formulations found in this category.</p>
+          <p className="text-xs text-neutral-555">No other formulations found in this category.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {relatedProducts.map((relatedMed) => {
@@ -845,7 +846,7 @@ function MedicineDetailView({ onAddToCart }) {
                   to={`/${relatedCatSlug}/${relatedNameSlug}`}
                   className="block group"
                 >
-                  <Card className="h-full relative flex flex-col justify-between rounded-2xl border border-neutral-250 dark:border-neutral-900 bg-white/40 dark:bg-neutral-900/10 p-4 hover:shadow-md hover:border-neutral-350 dark:hover:border-neutral-850 transition-all duration-300 cursor-pointer">
+                  <Card className="h-full relative flex flex-col justify-between rounded-2xl border border-neutral-255 dark:border-neutral-900 bg-white/40 dark:bg-neutral-900/10 p-4 hover:shadow-md hover:border-neutral-350 dark:hover:border-neutral-800 transition-all duration-300 cursor-pointer">
                     <div className="flex gap-4">
                       <div className="h-20 w-20 shrink-0 rounded-xl bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 flex items-center justify-center p-2 overflow-hidden">
                         {relatedMed.image_url ? (
@@ -1155,7 +1156,7 @@ function AdminView() {
         </div>
       )}
       {error && (
-        <div className="mb-6 p-4 rounded-xl border border-red-500/20 bg-red-500/10 text-red-650 font-bold text-xs">
+        <div className="mb-6 p-4 rounded-xl border border-red-500/20 bg-red-500/10 text-red-655 font-bold text-xs">
           {error}
         </div>
       )}
@@ -1363,7 +1364,7 @@ function AdminView() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-neutral-200 dark:border-neutral-900 text-neutral-450 uppercase font-bold">
+                <tr className="border-b border-neutral-200 dark:border-neutral-900 text-neutral-455 uppercase font-bold">
                   <th className="py-3 px-4">Brand Name</th>
                   <th className="py-3 px-4">Active Salt</th>
                   <th className="py-3 px-4">Formulation</th>
@@ -1420,7 +1421,460 @@ function AdminView() {
   )
 }
 
-/* ================= MAIN APP CONTAINER (ROUTER) ================= */
+/* ================= CART VIEW (REVIEW CART ITEMS) ================= */
+function CartView({ cart, onUpdateQuantity, onRemoveFromCart, onClearCart }) {
+  const navigate = useNavigate()
+  
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const gstTax = subtotal * 0.18 // 18% GST for medical goods
+  const shipping = subtotal > 250 || subtotal === 0 ? 0 : 15.00
+  const grandTotal = subtotal + gstTax + shipping
+
+  if (cart.length === 0) {
+    return (
+      <main className="max-w-xl mx-auto my-24 p-8 border border-neutral-200 dark:border-neutral-900 rounded-3xl text-center bg-white dark:bg-neutral-900/20 shadow-xs relative z-10">
+        <div className="h-16 w-16 rounded-full bg-brand-green/10 text-brand-green flex items-center justify-center mx-auto mb-6">
+          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Your Wholesale Cart is Empty</h2>
+        <p className="text-sm text-neutral-500 mt-3 leading-relaxed">
+          Search the formulation catalog and add case packs of medicines to build your B2B purchase order.
+        </p>
+        <Button onClick={() => navigate('/')} className="mt-8 rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold cursor-pointer px-6">
+          Browse Formulations
+        </Button>
+      </main>
+    )
+  }
+
+  return (
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
+      <div className="mb-8">
+        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">Wholesale Cart</h1>
+        <p className="text-xs text-neutral-500 mt-1.5">Review items and prepare purchase dispatch.</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        {/* Cart Item List (8 Columns) */}
+        <div className="lg:col-span-8 flex flex-col gap-4">
+          {cart.map((item) => (
+            <Card key={item.id} className="rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4 w-full sm:w-auto">
+                {/* Product thumbnail */}
+                <div className="h-16 w-16 rounded-xl bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 flex items-center justify-center p-2 shrink-0">
+                  {item.image_url ? (
+                    <img src={item.image_url} alt={item.name} className="max-h-full max-w-full object-contain" />
+                  ) : (
+                    <span className="text-[9px] font-mono text-neutral-400">No Image</span>
+                  )}
+                </div>
+
+                <div>
+                  <h3 className="font-bold text-sm text-neutral-900 dark:text-white line-clamp-1">{item.name}</h3>
+                  <span className="text-[10px] text-brand-green font-semibold uppercase tracking-wider block mt-0.5">{item.salt_name}</span>
+                  <span className="text-[10px] text-neutral-450 block mt-0.5">Category: {item.formulation}</span>
+                </div>
+              </div>
+
+              {/* Price, Quantity, Subtotal controls */}
+              <div className="flex flex-wrap items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
+                
+                {/* Unit Price */}
+                <div className="text-left sm:text-right">
+                  <span className="text-[9px] text-neutral-400 uppercase font-semibold block">Price</span>
+                  <span className="font-bold text-sm">${item.price.toFixed(2)}</span>
+                </div>
+
+                {/* Quantity adjustments */}
+                <div className="flex items-center gap-2 border border-neutral-200 dark:border-neutral-850 p-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-950">
+                  <button
+                    onClick={() => onUpdateQuantity(item.id, Math.max(item.min_order_quantity || 10, item.quantity - 10))}
+                    className="h-6 w-6 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-900 flex items-center justify-center text-xs font-bold cursor-pointer"
+                  >
+                    -
+                  </button>
+                  <span className="text-xs font-bold w-10 text-center">{item.quantity}</span>
+                  <button
+                    onClick={() => onUpdateQuantity(item.id, Math.min(item.stock || 999, item.quantity + 10))}
+                    className="h-6 w-6 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-900 flex items-center justify-center text-xs font-bold cursor-pointer"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {/* Item Subtotal */}
+                <div className="text-right">
+                  <span className="text-[9px] text-neutral-400 uppercase font-semibold block">Subtotal</span>
+                  <span className="font-bold text-sm text-neutral-900 dark:text-white">${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+
+                {/* Remove button */}
+                <button
+                  onClick={() => onRemoveFromCart(item.id)}
+                  className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition cursor-pointer"
+                  aria-label="Remove item"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+
+              </div>
+            </Card>
+          ))}
+
+          <div className="flex justify-between items-center mt-2 px-1">
+            <Button variant="ghost" onClick={onClearCart} className="text-red-500 hover:bg-red-500/10 rounded-xl cursor-pointer text-xs font-bold">
+              Empty Shopping Cart
+            </Button>
+            <Link to="/" className="text-xs font-bold text-brand-green hover:underline">
+              &larr; Keep Adding Products
+            </Link>
+          </div>
+        </div>
+
+        {/* Pricing Summary Panel (4 Columns) */}
+        <div className="lg:col-span-4">
+          <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 shadow-sm">
+            <h2 className="text-base font-bold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-900 pb-3 mb-4">
+              Wholesale Order Summary
+            </h2>
+            
+            <div className="flex flex-col gap-3 text-xs">
+              <div className="flex justify-between text-neutral-500">
+                <span>Items Subtotal</span>
+                <span className="font-bold text-neutral-800 dark:text-neutral-200">${subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-neutral-500">
+                <span>Estimated GST (18%)</span>
+                <span className="font-bold text-neutral-800 dark:text-neutral-200">${gstTax.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-neutral-500">
+                <span>Shipping & Freight</span>
+                <span className="font-bold text-neutral-800 dark:text-neutral-200">
+                  {shipping === 0 ? <span className="text-emerald-500">FREE</span> : `$${shipping.toFixed(2)}`}
+                </span>
+              </div>
+              
+              {shipping > 0 && (
+                <div className="text-[10px] text-neutral-400 bg-neutral-100 dark:bg-neutral-950 p-2 rounded-lg text-center mt-1 border border-neutral-200 dark:border-neutral-900">
+                  Add <span className="font-bold text-brand-green">${(250 - subtotal).toFixed(2)}</span> more to qualify for Free Shipping!
+                </div>
+              )}
+
+              <div className="border-t border-neutral-200 dark:border-neutral-900/80 pt-4 mt-2 flex justify-between text-sm">
+                <span className="font-bold text-neutral-900 dark:text-white">Estimated Total</span>
+                <span className="font-extrabold text-brand-green text-lg">${grandTotal.toFixed(2)}</span>
+              </div>
+
+              <Button
+                onClick={() => navigate('/checkout')}
+                className="mt-6 w-full cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs py-6 shadow-lg shadow-brand-green/20"
+              >
+                Proceed to Checkout
+              </Button>
+            </div>
+          </Card>
+        </div>
+
+      </div>
+    </main>
+  )
+}
+
+/* ================= CHECKOUT VIEW ================= */
+function CheckoutView({ cart, onClearCart }) {
+  const navigate = useNavigate()
+  const { isLoaded, isSignedIn, user } = useUser()
+  
+  const [submitLoading, setSubmitLoading] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState("razorpay")
+  const [formFields, setFormFields] = useState({
+    pharmacyName: '',
+    drugLicense: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    zip: ''
+  })
+
+  // Autofill signed-in user name
+  useEffect(() => {
+    if (isLoaded && isSignedIn && user) {
+      setFormFields(prev => ({
+        ...prev,
+        pharmacyName: user.fullName || ''
+      }))
+    }
+  }, [isLoaded, isSignedIn, user])
+
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const gstTax = subtotal * 0.18
+  const shipping = subtotal > 250 || subtotal === 0 ? 0 : 15.00
+  const grandTotal = subtotal + gstTax + shipping
+
+  if (cart.length === 0) {
+    return (
+      <div className="max-w-md mx-auto my-24 p-8 border border-neutral-200 dark:border-neutral-900 rounded-3xl text-center bg-white dark:bg-neutral-900/20 shadow-xs">
+        <h2 className="text-xl font-bold">No items for checkout</h2>
+        <Button onClick={() => navigate('/')} className="mt-6 rounded-xl bg-brand-green text-white">
+          Return to Store
+        </Button>
+      </div>
+    )
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormFields(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setSubmitLoading(true)
+
+    // Simulate order placement database latency
+    setTimeout(() => {
+      setSubmitLoading(false)
+      
+      // Navigate to success page carrying state metadata
+      navigate('/order-success', {
+        state: {
+          orderId: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
+          pharmacyName: formFields.pharmacyName,
+          drugLicense: formFields.drugLicense,
+          paymentMethod: paymentMethod,
+          grandTotal: grandTotal,
+          itemsCount: cart.reduce((sum, item) => sum + item.quantity, 0)
+        }
+      })
+      onClearCart()
+    }, 1500)
+  }
+
+  return (
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
+      <div className="mb-8">
+        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">Wholesale Checkout</h1>
+        <p className="text-xs text-neutral-505 mt-1.5">Verify license credentials and billing address details.</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        {/* Checkout Form (7 Columns) */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
+          <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 sm:p-8">
+            <h2 className="text-base font-bold text-neutral-900 dark:text-white mb-6 border-b border-neutral-200 dark:border-neutral-900/80 pb-3">
+              1. B2B License Verification & Delivery Info
+            </h2>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-neutral-500">Pharmacy / Clinic Name</label>
+                <Input required name="pharmacyName" value={formFields.pharmacyName} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-neutral-500">Drug License Number (DL-20B/21B)</label>
+                <Input required placeholder="DL-XX-XXXX-XXXX" name="drugLicense" value={formFields.drugLicense} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-neutral-500">Contact Number</label>
+                <Input required type="tel" name="phone" value={formFields.phone} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+              </div>
+
+              <div className="flex flex-col gap-2 sm:col-span-2">
+                <label className="text-xs font-bold text-neutral-500">Delivery Address</label>
+                <Input required name="address" value={formFields.address} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-neutral-500">City</label>
+                <Input required name="city" value={formFields.city} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-neutral-500">State</label>
+                <Input required name="state" value={formFields.state} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-neutral-500">Postal ZIP Code</label>
+                <Input required name="zip" value={formFields.zip} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+              </div>
+            </div>
+          </Card>
+
+          {/* Payment Method card */}
+          <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 sm:p-8">
+            <h2 className="text-base font-bold text-neutral-900 dark:text-white mb-6 border-b border-neutral-200 dark:border-neutral-900/80 pb-3">
+              2. Choose B2B Payment Option
+            </h2>
+            
+            <div className="flex flex-col gap-4">
+              <label className="flex items-center gap-3 cursor-pointer p-4 border border-neutral-200 dark:border-neutral-900 rounded-xl hover:bg-neutral-100/30 dark:hover:bg-neutral-900/30 transition">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="razorpay"
+                  checked={paymentMethod === "razorpay"}
+                  onChange={() => setPaymentMethod("razorpay")}
+                  className="h-4 w-4 text-brand-green accent-brand-green cursor-pointer"
+                />
+                <div>
+                  <span className="text-xs font-bold text-neutral-850 dark:text-white block">UPI / Cards / Indian NetBanking (via Razorpay)</span>
+                  <span className="text-[10px] text-neutral-450 block mt-0.5">Pay instantly using corporate bank transfer, UPI, or credit cards.</span>
+                </div>
+              </label>
+
+              <label className="flex items-center gap-3 cursor-pointer p-4 border border-neutral-200 dark:border-neutral-900 rounded-xl hover:bg-neutral-100/30 dark:hover:bg-neutral-900/30 transition">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="net30"
+                  checked={paymentMethod === "net30"}
+                  onChange={() => setPaymentMethod("net30")}
+                  className="h-4 w-4 text-brand-green accent-brand-green cursor-pointer"
+                />
+                <div>
+                  <span className="text-xs font-bold text-neutral-850 dark:text-white block">Wholesale Invoice Terms (Net-30 Days credit)</span>
+                  <span className="text-[10px] text-neutral-450 block mt-0.5">Generate a digital invoice. Pay via Bank Wire Transfer within 30 days of shipment receipt.</span>
+                </div>
+              </label>
+            </div>
+          </Card>
+        </div>
+
+        {/* Order review sidebar (5 Columns) */}
+        <div className="lg:col-span-5 flex flex-col gap-6">
+          <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6">
+            <h2 className="text-base font-bold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-900 pb-3 mb-4">
+              Order Review
+            </h2>
+            
+            <div className="flex flex-col gap-3 divide-y divide-neutral-100 dark:divide-neutral-900/60">
+              {cart.map((item) => (
+                <div key={item.id} className="flex justify-between items-center py-3 first:pt-0">
+                  <div className="max-w-[70%]">
+                    <span className="font-bold text-xs text-neutral-800 dark:text-neutral-200 block line-clamp-1">{item.name}</span>
+                    <span className="text-[9px] text-neutral-450 mt-0.5 block">{item.quantity} units x ${item.price.toFixed(2)}</span>
+                  </div>
+                  <span className="font-bold text-xs text-neutral-900 dark:text-white">${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="border-t border-neutral-200 dark:border-neutral-900/80 pt-4 mt-4 flex flex-col gap-3 text-xs">
+              <div className="flex justify-between text-neutral-500">
+                <span>Subtotal</span>
+                <span>${subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-neutral-500">
+                <span>GST Tax (18%)</span>
+                <span>${gstTax.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-neutral-500">
+                <span>Shipping Freight</span>
+                <span>{shipping === 0 ? <span className="text-emerald-500 font-bold">FREE</span> : `$${shipping.toFixed(2)}`}</span>
+              </div>
+              <div className="border-t border-neutral-200 dark:border-neutral-900/80 pt-4 mt-2 flex justify-between text-sm">
+                <span className="font-bold text-neutral-900 dark:text-white">Grand Total</span>
+                <span className="font-extrabold text-brand-green text-base">${grandTotal.toFixed(2)}</span>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={submitLoading}
+                className="mt-6 w-full cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs py-6 shadow-lg shadow-brand-green/20"
+              >
+                {submitLoading ? "Processing dispatch order..." : "Place Bulk Purchase Order"}
+              </Button>
+            </div>
+          </Card>
+        </div>
+
+      </form>
+    </main>
+  )
+}
+
+/* ================= ORDER CONFIRMATION / SUCCESS VIEW ================= */
+function OrderSuccessView() {
+  const { state } = useParams() // React Router holds state details in navigation payload
+  const navigate = useNavigate()
+  const location = window.history.state?.usr // Access values carried over by state redirection
+
+  const orderId = location?.orderId || "ORD-739420"
+  const pharmacyName = location?.pharmacyName || "Registered Pharmacist"
+  const drugLicense = location?.drugLicense || "DL-XX-XXXX-XXXX"
+  const grandTotal = location?.grandTotal || 0
+  const paymentMethod = location?.paymentMethod === 'net30' ? "Net-30 Invoice" : "Online Razorpay"
+
+  return (
+    <main className="max-w-2xl mx-auto my-16 px-4 py-8 relative z-10 text-center">
+      <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-8 sm:p-12 shadow-md">
+        
+        {/* Success Icon */}
+        <div className="h-16 w-16 rounded-full bg-brand-green/10 text-brand-green flex items-center justify-center mx-auto mb-6">
+          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.6} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+
+        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">Wholesale Purchase Placed</h1>
+        <p className="text-xs text-neutral-500 mt-2">Your B2B medicine order has been logged and queued for batch shipment.</p>
+
+        {/* Order Details list */}
+        <div className="mt-8 bg-neutral-100/50 dark:bg-neutral-950/40 border border-neutral-200 dark:border-neutral-900 rounded-2xl p-6 text-left text-xs flex flex-col gap-4">
+          <div className="flex justify-between border-b border-neutral-200 dark:border-neutral-900/60 pb-2">
+            <span className="text-neutral-450 uppercase font-bold tracking-wider text-[10px]">Order ID Number</span>
+            <span className="font-extrabold text-neutral-800 dark:text-white font-mono">{orderId}</span>
+          </div>
+
+          <div className="flex justify-between border-b border-neutral-200 dark:border-neutral-900/60 pb-2">
+            <span className="text-neutral-450 uppercase font-bold tracking-wider text-[10px]">Pharmacy Name</span>
+            <span className="font-bold text-neutral-800 dark:text-white">{pharmacyName}</span>
+          </div>
+
+          <div className="flex justify-between border-b border-neutral-200 dark:border-neutral-900/60 pb-2">
+            <span className="text-neutral-450 uppercase font-bold tracking-wider text-[10px]">Drug License Number</span>
+            <span className="font-bold text-neutral-800 dark:text-white">{drugLicense}</span>
+          </div>
+
+          <div className="flex justify-between border-b border-neutral-200 dark:border-neutral-900/60 pb-2">
+            <span className="text-neutral-450 uppercase font-bold tracking-wider text-[10px]">Invoice Settlement Mode</span>
+            <span className="font-bold text-brand-green uppercase font-extrabold">{paymentMethod}</span>
+          </div>
+
+          <div className="flex justify-between pt-1 text-sm font-bold">
+            <span className="text-neutral-900 dark:text-white">Amount Billed</span>
+            <span className="text-brand-green font-extrabold text-base">${grandTotal.toFixed(2)}</span>
+          </div>
+        </div>
+
+        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+          <Button onClick={() => navigate('/')} className="rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold cursor-pointer flex-grow sm:flex-grow-0 px-6 py-6">
+            Continue Sourcing
+          </Button>
+          <Button variant="outline" className="rounded-xl border-neutral-250 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900 cursor-pointer flex-grow sm:flex-grow-0 px-6 py-6">
+            Download Invoice PDF
+          </Button>
+        </div>
+
+      </Card>
+    </main>
+  )
+}
+
+/* ================= MAIN APP ROUTER CONTAINER ================= */
 export default function App() {
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -1432,7 +1886,8 @@ export default function App() {
     return 'dark'
   })
   
-  const [cartCount, setCartCount] = useState(0)
+  // Master Cart State Array
+  const [cart, setCart] = useState([])
   const [activeBanner, setActiveBanner] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState("All Products")
 
@@ -1451,8 +1906,34 @@ export default function App() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
   }
 
-  const handleAddToCart = (e, count = 1) => {
-    setCartCount(prev => prev + count)
+  // Cart Helper functions
+  const handleAddToCart = (med, quantityToPurchase = 1) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === med.id)
+      if (existing) {
+        // Enforce stock limits
+        const newQty = Math.min(med.stock, existing.quantity + quantityToPurchase)
+        return prev.map((item) => (item.id === med.id ? { ...item, quantity: newQty } : item))
+      } else {
+        // Enforce minimum order quantity (MOQ)
+        const initialQty = Math.max(med.min_order_quantity || 10, quantityToPurchase)
+        return [...prev, { ...med, quantity: initialQty }]
+      }
+    })
+  }
+
+  const handleUpdateCartQuantity = (medId, newQuantity) => {
+    setCart((prev) =>
+      prev.map((item) => (item.id === medId ? { ...item, quantity: newQuantity } : item))
+    )
+  }
+
+  const handleRemoveFromCart = (medId) => {
+    setCart((prev) => prev.filter((item) => item.id !== medId))
+  }
+
+  const handleClearCart = () => {
+    setCart([])
   }
 
   // Automatic Banner Carousel Switcher
@@ -1466,7 +1947,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-100 font-sans selection:bg-brand-green selection:text-white transition-colors duration-300">
-        <Header theme={theme} toggleTheme={toggleTheme} cartCount={cartCount} />
+        <Header theme={theme} toggleTheme={toggleTheme} cart={cart} />
         
         <Routes>
           <Route
@@ -1488,6 +1969,30 @@ export default function App() {
           <Route
             path="/admin"
             element={<AdminView />}
+          />
+          <Route
+            path="/cart"
+            element={
+              <CartView
+                cart={cart}
+                onUpdateQuantity={handleUpdateCartQuantity}
+                onRemoveFromCart={handleRemoveFromCart}
+                onClearCart={handleClearCart}
+              />
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <CheckoutView
+                cart={cart}
+                onClearCart={handleClearCart}
+              />
+            }
+          />
+          <Route
+            path="/order-success"
+            element={<OrderSuccessView />}
           />
         </Routes>
       </div>
