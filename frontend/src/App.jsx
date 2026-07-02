@@ -1725,7 +1725,9 @@ function CheckoutView({ cart, onClearCart }) {
         prefill: {
           name: formFields.pharmacyName,
           email: user?.primaryEmailAddress?.emailAddress || "pharmacist@example.com",
-          contact: formFields.phone
+          contact: (formFields.phone || '').replace(/\D/g, '').length >= 10 
+            ? (formFields.phone || '').replace(/\D/g, '') 
+            : '9999999999'
         },
         theme: {
           color: "#8DC32D"

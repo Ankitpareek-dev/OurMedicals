@@ -334,6 +334,12 @@ def create_razorpay_order(payload: PaymentOrderCreate):
         
     try:
         client = get_razorpay_client()
+        
+        # Razorpay Test Mode has a transaction cap of ₹50,000 (5,000,000 paise).
+        # If using test keys, we cap the payment amount at ₹45,000 to prevent API limit failures.
+        if RAZORPAY_KEY_ID.startswith("rzp_test_") and inr_amount_paise > 4500000:
+            inr_amount_paise = 4500000
+            
         order_data = {
             "amount": inr_amount_paise,
             "currency": "INR",
