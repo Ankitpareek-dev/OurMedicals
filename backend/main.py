@@ -107,7 +107,7 @@ def get_medicines(
         if search:
             # Clean search term to avoid issues and use PostgREST wildcard *
             clean_search = search.strip().replace(",", " ").replace(".", " ").replace(";", " ")
-            query = query.or_(f"name.ilike.*{clean_search}*,composition.ilike.*{clean_search}*")
+            query = query.or_(f"name.ilike.*{clean_search}*,composition.ilike.*{clean_search}*,formulation.ilike.*{clean_search}*")
             
         res = query.range(start, end).order("name").execute()
         
