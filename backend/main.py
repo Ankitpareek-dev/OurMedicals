@@ -299,3 +299,64 @@ def delete_medicine(id: int, current_user: dict = Depends(require_admin)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Razorpay Integration
+import razorpay
+
+class PaymentOrderCreate(BaseModel):
+    amount: float
+
+class PaymentVerify(BaseModel):
+    order_id: str
+    payment_id: str
+    signature: str
+
+# Razorpay config credentials
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "rzp_test_tG0vA0Vv2sB48Z")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "MvUhomYfWO9CFwvBTCiXQ")
+
+def get_razorpay_client():
+    return razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+
+@app.post("/api/payments/create-order")
+def create_razorpay_order(payload: PaymentOrderCreate):
+    try:
+        client = get_razorpay_client()
+        # Convert USD to INR (approx 1 USD = 83 INR) and then to Paise (1 INR = 100 Paise)
+        inr_amount_paise = int(payload.amount * 83.0 * 100)
+        
+        order_data = {
+            "amount": inr_amount_paise,
+            "currency": "INR",
+            "payment_capture": 1
+        }
+        order = client.order.create(data=order_data)
+        # Attach the public key so the frontend knows what key to initialize Razorpay checkout with
+        order["key"] = RAZORPAY_KEY_ID
+        return order
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Razorpay order creation failed: {str(e)}"
+        )
+
+@app.post("/api/payments/verify-signature")
+def verify_payment_signature(payload: PaymentVerify):
+    try:
+        client = get_razorpay_client()
+        client.utility.verify_payment_signature({
+            'razorpay_order_id': payload.order_id,
+            'razorpay_payment_id': payload.payment_id,
+            'razorpay_signature': payload.signature
+        })
+        return {"status": "success", "message": "Signature verified successfully"}
+    except razorpay.errors.SignatureVerificationError:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid payment signature. Verification failed."
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Verification process error: {str(e)}"
+        )
+

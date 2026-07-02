@@ -1591,6 +1591,7 @@ function CheckoutView({ cart, onClearCart }) {
   const { isLoaded, isSignedIn, user } = useUser()
   
   const [submitLoading, setSubmitLoading] = useState(false)
+  const [error, setError] = useState('')
   const [paymentMethod, setPaymentMethod] = useState("razorpay")
   const [formFields, setFormFields] = useState({
     pharmacyName: '',
@@ -1636,27 +1637,113 @@ function CheckoutView({ cart, onClearCart }) {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitLoading(true)
+    setError('')
 
-    // Simulate order placement database latency
-    setTimeout(() => {
-      setSubmitLoading(false)
-      
-      // Navigate to success page carrying state metadata
-      navigate('/order-success', {
-        state: {
-          orderId: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
-          pharmacyName: formFields.pharmacyName,
-          drugLicense: formFields.drugLicense,
-          paymentMethod: paymentMethod,
-          grandTotal: grandTotal,
-          itemsCount: cart.reduce((sum, item) => sum + item.quantity, 0)
-        }
+    if (paymentMethod === 'net30') {
+      // Simulate order placement database latency
+      setTimeout(() => {
+        setSubmitLoading(false)
+        navigate('/order-success', {
+          state: {
+            orderId: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
+            pharmacyName: formFields.pharmacyName,
+            drugLicense: formFields.drugLicense,
+            paymentMethod: "Net-30 Invoice Terms",
+            grandTotal: grandTotal,
+            itemsCount: cart.reduce((sum, item) => sum + item.quantity, 0)
+          }
+        })
+        onClearCart()
+      }, 1500)
+      return
+    }
+
+    // Razorpay online checkout integration
+    try {
+      // 1. Create order on backend API
+      const resOrder = await fetch("http://127.0.0.1:8000/api/payments/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: grandTotal })
       })
-      onClearCart()
-    }, 1500)
+
+      if (!resOrder.ok) {
+        throw new Error("Failed to contact payment server to initialize Razorpay checkout.")
+      }
+
+      const orderData = await resOrder.json()
+
+      // 2. Configure Razorpay SDK options
+      const options = {
+        key: orderData.key,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Our Medicals",
+        description: "Bulk Wholesale Formulation Sourcing",
+        order_id: orderData.id,
+        handler: async function (response) {
+          try {
+            setSubmitLoading(true)
+            // 3. Verify Razorpay signature on backend
+            const resVerify = await fetch("http://127.0.0.1:8000/api/payments/verify-signature", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                order_id: response.razorpay_order_id,
+                payment_id: response.razorpay_payment_id,
+                signature: response.razorpay_signature
+              })
+            })
+
+            if (!resVerify.ok) {
+              const errData = await resVerify.json()
+              throw new Error(errData.detail || "Payment signature verification failed.")
+            }
+
+            // Success redirect to order completion page
+            setSubmitLoading(false)
+            navigate('/order-success', {
+              state: {
+                orderId: response.razorpay_order_id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
+                pharmacyName: formFields.pharmacyName,
+                drugLicense: formFields.drugLicense,
+                paymentMethod: "Online Checkout (Razorpay)",
+                grandTotal: grandTotal,
+                itemsCount: cart.reduce((sum, item) => sum + item.quantity, 0)
+              }
+            })
+            onClearCart()
+          } catch (err) {
+            console.error(err)
+            setError(err.message || "Failed to verify transaction status.")
+            setSubmitLoading(false)
+          }
+        },
+        prefill: {
+          name: formFields.pharmacyName,
+          email: user?.primaryEmailAddress?.emailAddress || "pharmacist@example.com",
+          contact: formFields.phone
+        },
+        theme: {
+          color: "#8DC32D"
+        },
+        modal: {
+          ondismiss: function() {
+            setSubmitLoading(false)
+          }
+        }
+      }
+
+      const rzp = new window.Razorpay(options)
+      rzp.open()
+    } catch (err) {
+      console.error(err)
+      setError(err.message || "Failed to initialize payment gateway window.")
+      setSubmitLoading(false)
+    }
   }
 
   return (
@@ -1665,6 +1752,12 @@ function CheckoutView({ cart, onClearCart }) {
         <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">Wholesale Checkout</h1>
         <p className="text-xs text-neutral-505 mt-1.5">Verify license credentials and billing address details.</p>
       </div>
+
+      {error && (
+        <div className="mb-6 p-4 rounded-xl border border-red-500/20 bg-red-500/10 text-red-655 font-bold text-xs">
+          {error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
