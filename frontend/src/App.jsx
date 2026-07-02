@@ -1,4 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  useAuth
+} from '@clerk/clerk-react'
 
 export default function App() {
   const [theme, setTheme] = useState(() => {
@@ -20,6 +28,7 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  const { getToken, isSignedIn } = useAuth()
   const pageSize = 12
 
   useEffect(() => {
@@ -42,9 +51,12 @@ export default function App() {
           url += `&search=${encodeURIComponent(searchQuery)}`
         }
 
+        // Fetch Clerk JWT token if user is signed in
+        const token = isSignedIn ? await getToken() : null
+
         const response = await fetch(url, {
           headers: {
-            'Authorization': 'Bearer mock-token-for-local-dev'
+            'Authorization': token ? `Bearer ${token}` : 'Bearer mock-token-for-local-dev'
           }
         })
 
@@ -65,7 +77,7 @@ export default function App() {
     }
 
     fetchMedicines()
-  }, [page, searchQuery])
+  }, [page, searchQuery, isSignedIn])
 
   const handleSearchSubmit = (e) => {
     e.preventDefault()
@@ -124,12 +136,26 @@ export default function App() {
               )}
             </button>
 
-            <button className="text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors duration-200 px-2">
-              Help
-            </button>
-            <button className="cursor-pointer rounded-xl bg-brand-green px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-brand-green/20 hover:bg-brand-green-hover transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
-              Client Portal
-            </button>
+            {/* Authentication Controls */}
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className="cursor-pointer text-sm font-semibold text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors duration-200 px-2">
+                  Sign In
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="cursor-pointer rounded-xl bg-brand-green px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-brand-green/20 hover:bg-brand-green-hover transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+                  Register
+                </button>
+              </SignUpButton>
+            </SignedOut>
+
+            <SignedIn>
+              <span className="hidden md:inline-block text-xs font-semibold text-neutral-400 bg-neutral-100 dark:bg-neutral-900 px-3 py-1.5 rounded-xl border border-neutral-200 dark:border-neutral-800">
+                Verified Buyer
+              </span>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
           </div>
         </div>
       </nav>
@@ -207,7 +233,7 @@ export default function App() {
             <p className="text-red-600 dark:text-red-450 font-medium">{error}</p>
             <button
               onClick={() => setPage(page)}
-              className="mt-4 inline-flex items-center gap-2 rounded-lg bg-red-600/20 px-4 py-2 text-xs font-semibold text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-650/30 transition"
+              className="mt-4 inline-flex items-center gap-2 rounded-lg bg-red-600/20 px-4 py-2 text-xs font-semibold text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-655/30 transition"
             >
               Retry Connection
             </button>
