@@ -7,8 +7,21 @@ import {
   UserButton,
   useAuth
 } from '@clerk/clerk-react'
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+  DialogFooter
+} from "@/components/ui/dialog"
 
-// Mock promotions data for e-commerce banners
+// Mock promotions data
 const PROMOTIONS = [
   {
     id: 1,
@@ -62,6 +75,10 @@ export default function App() {
   const [error, setError] = useState('')
   const [activeBanner, setActiveBanner] = useState(0)
   const [cartCount, setCartCount] = useState(0)
+  
+  // Modal State for Medicine Details
+  const [selectedMedicine, setSelectedMedicine] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { getToken, isSignedIn } = useAuth()
   const pageSize = 12
@@ -77,7 +94,7 @@ export default function App() {
     localStorage.setItem('theme', theme)
   }, [theme])
 
-  // Fetch medicines combining search + category filters (mapped to search backend query)
+  // Fetch medicines
   useEffect(() => {
     const fetchMedicines = async () => {
       setLoading(true)
@@ -85,7 +102,6 @@ export default function App() {
       try {
         let url = `http://127.0.0.1:8000/api/medicines?page=${page}&page_size=${pageSize}`
         
-        // Assemble search query combining search text and category filter
         let combinedSearch = searchQuery
         const catObj = CATEGORIES.find(c => c.name === selectedCategory)
         if (catObj && catObj.filter) {
@@ -144,11 +160,16 @@ export default function App() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
   }
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e?.stopPropagation() // Prevent opening modal when clicking cart button
     setCartCount(prev => prev + 1)
   }
 
-  // Automatic Banner Carousel Switcher
+  const handleOpenMedicineDetails = (med) => {
+    setSelectedMedicine(med)
+    setIsModalOpen(true)
+  }
+
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveBanner(prev => (prev + 1) % PROMOTIONS.length)
@@ -183,24 +204,25 @@ export default function App() {
           {/* Nav Controls */}
           <div className="flex items-center gap-4">
             {/* Theme Toggle */}
-            <button
+            <Button
+              variant="outline"
+              size="icon"
               onClick={toggleTheme}
-              className="p-2 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-850 hover:text-neutral-900 dark:hover:text-white transition-all cursor-pointer"
-              aria-label="Toggle light/dark mode"
+              className="rounded-xl h-10 w-10 border-neutral-200 dark:border-neutral-850 hover:bg-neutral-100 dark:hover:bg-neutral-900 cursor-pointer"
             >
               {theme === 'dark' ? (
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m2.828 0l-.707-.707m12.02-12.02l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
                 </svg>
               ) : (
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                 </svg>
               )}
-            </button>
+            </Button>
 
             {/* Shopping Cart Indicator */}
-            <div className="relative cursor-pointer p-2 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
+            <div className="relative cursor-pointer p-2.5 rounded-xl border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
@@ -215,19 +237,19 @@ export default function App() {
             <div className="flex items-center gap-2 border-l border-neutral-200 dark:border-neutral-800 pl-4">
               <SignedOut>
                 <SignInButton mode="modal">
-                  <button className="cursor-pointer text-sm font-semibold text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors duration-200 px-2">
+                  <Button variant="ghost" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white cursor-pointer font-semibold text-sm">
                     Sign In
-                  </button>
+                  </Button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="cursor-pointer rounded-xl bg-brand-green px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-brand-green/20 hover:bg-brand-green-hover transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+                  <Button className="cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white shadow-lg shadow-brand-green/20 font-semibold text-sm">
                     Register
-                  </button>
+                  </Button>
                 </SignUpButton>
               </SignedOut>
 
               <SignedIn>
-                <span className="hidden md:inline-block text-[10px] uppercase tracking-wider font-extrabold text-brand-green bg-brand-green/10 border border-brand-green/20 px-2.5 py-1 rounded-lg mr-2">
+                <span className="hidden md:inline-block text-[10px] uppercase tracking-wider font-extrabold text-brand-green bg-brand-green/10 border border-brand-green/20 px-2.5 py-1.5 rounded-lg mr-2">
                   Verified Pharmacist
                 </span>
                 <UserButton afterSignOutUrl="/" />
@@ -237,15 +259,15 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Promos / Deals Slider (E-commerce Banner) */}
+      {/* Promos / Deals Slider */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className={`relative overflow-hidden rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-gradient-to-r ${PROMOTIONS[activeBanner].bgClass} p-8 sm:p-10 transition-all duration-500`}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             {/* Promo Info */}
             <div className="relative z-10 max-w-lg">
-              <span className="inline-flex items-center rounded-full bg-brand-green/10 px-3 py-1 text-xs font-bold text-brand-green border border-brand-green/20">
+              <Badge className="bg-brand-green/20 text-brand-green hover:bg-brand-green/20 border border-brand-green/20 px-3 py-1 font-bold text-xs uppercase tracking-wider">
                 {PROMOTIONS[activeBanner].badge}
-              </span>
+              </Badge>
               <h2 className="mt-4 text-3xl sm:text-4xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
                 {PROMOTIONS[activeBanner].title}
               </h2>
@@ -253,19 +275,19 @@ export default function App() {
                 {PROMOTIONS[activeBanner].description}
               </p>
               <div className="mt-6 flex flex-wrap gap-4">
-                <button 
+                <Button 
                   onClick={() => handleCategorySelect(PROMOTIONS[activeBanner].id === 1 ? "Capsules" : "Ortho Support")}
-                  className="cursor-pointer rounded-xl bg-brand-green px-5 py-3 text-xs font-bold text-white shadow-lg shadow-brand-green/20 hover:bg-brand-green-hover transition-colors"
+                  className="cursor-pointer rounded-xl bg-brand-green text-white hover:bg-brand-green-hover font-bold text-xs px-5 py-6 shadow-lg shadow-brand-green/20"
                 >
                   {PROMOTIONS[activeBanner].cta}
-                </button>
-                <button className="rounded-xl border border-neutral-300 dark:border-neutral-800 bg-white/50 dark:bg-neutral-950/20 backdrop-blur-xs px-5 py-3 text-xs font-bold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors">
+                </Button>
+                <Button variant="outline" className="rounded-xl border-neutral-300 dark:border-neutral-800 bg-white/50 dark:bg-neutral-950/20 backdrop-blur-xs font-bold text-xs px-5 py-6">
                   View Catalog Sheet
-                </button>
+                </Button>
               </div>
             </div>
 
-            {/* Promo Product Image (E-commerce Product Showcase) */}
+            {/* Promo Product Image */}
             <div className="hidden md:flex justify-center relative">
               <div className="absolute inset-0 bg-brand-green/10 dark:bg-brand-green/5 blur-3xl rounded-full" />
               <img
@@ -299,21 +321,21 @@ export default function App() {
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             <div className="w-full lg:max-w-md">
               <h1 className="text-xl font-bold text-neutral-900 dark:text-white">Wholesale Catalog</h1>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Browse formulations, search active salts, and manage bulk purchases.</p>
+              <p className="text-xs text-neutral-505 dark:text-neutral-400 mt-1">Browse formulations, search active salts, and manage bulk purchases.</p>
             </div>
             
             {/* E-commerce Search Input */}
             <form onSubmit={handleSearchSubmit} className="w-full lg:max-w-lg flex gap-2">
-              <div className="relative flex-grow flex items-center border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-1.5 rounded-xl focus-within:border-brand-green/50 transition">
+              <div className="relative flex-grow flex items-center border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-1 rounded-xl focus-within:border-brand-green/50 transition">
                 <svg className="w-5 h-5 text-neutral-400 ml-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                <input
+                <Input
                   type="text"
                   placeholder="Search brand name, active composition, salt..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-transparent px-3 py-2 text-sm text-neutral-800 dark:text-neutral-200 placeholder-neutral-400 dark:placeholder-neutral-500 outline-none"
+                  className="w-full bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-3 text-sm text-neutral-800 dark:text-neutral-200"
                 />
                 {searchTerm && (
                   <button
@@ -325,12 +347,12 @@ export default function App() {
                   </button>
                 )}
               </div>
-              <button
+              <Button
                 type="submit"
-                className="cursor-pointer rounded-xl bg-brand-green px-5 py-2.5 text-xs font-bold text-white hover:bg-brand-green-hover transition"
+                className="cursor-pointer rounded-xl bg-brand-green text-white hover:bg-brand-green-hover font-bold text-xs px-6 py-5.5"
               >
                 Search
-              </button>
+              </Button>
             </form>
           </div>
 
@@ -361,12 +383,12 @@ export default function App() {
             {selectedCategory} <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400 ml-1">({loading ? '...' : total} results)</span>
           </h2>
           {searchQuery && (
-            <div className="flex items-center gap-1.5 bg-brand-green/10 border border-brand-green/20 px-2.5 py-1 rounded-lg text-xs text-brand-green">
+            <Badge className="bg-brand-green/15 text-brand-green hover:bg-brand-green/20 border border-brand-green/20 px-2 py-1 flex items-center gap-1">
               Keyword: "{searchQuery}"
-              <button onClick={handleClearSearch} className="font-bold hover:text-neutral-950 dark:hover:text-white ml-1 cursor-pointer">
+              <button onClick={handleClearSearch} className="font-bold hover:text-brand-green ml-1 cursor-pointer">
                 &times;
               </button>
-            </div>
+            </Badge>
           )}
         </div>
 
@@ -374,12 +396,13 @@ export default function App() {
         {error && (
           <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-center max-w-xl mx-auto my-12">
             <p className="text-red-600 dark:text-red-450 font-medium">{error}</p>
-            <button
+            <Button
               onClick={() => setPage(page)}
-              className="mt-4 inline-flex items-center gap-2 rounded-lg bg-red-600/20 px-4 py-2 text-xs font-semibold text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-650/30 transition"
+              variant="outline"
+              className="mt-4 border-red-500/30 text-red-500 hover:bg-red-500/10"
             >
               Retry Connection
-            </button>
+            </Button>
           </div>
         )}
 
@@ -392,26 +415,28 @@ export default function App() {
         ) : medicines.length === 0 ? (
           <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/20 p-16 text-center max-w-md mx-auto my-12 shadow-xs">
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white">No formulations in category</h3>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">
+            <p className="text-sm text-neutral-505 dark:text-neutral-400 mt-2">
               We couldn't find any products in "{selectedCategory}" matching your search settings.
             </p>
-            <button
+            <Button
               onClick={handleClearSearch}
-              className="mt-6 rounded-xl bg-neutral-100 dark:bg-neutral-850 px-4 py-2.5 text-xs font-semibold text-neutral-800 dark:text-white hover:bg-neutral-205 dark:hover:bg-neutral-800 transition"
+              variant="secondary"
+              className="mt-6 rounded-xl"
             >
               Reset Search filters
-            </button>
+            </Button>
           </div>
         ) : (
           <>
-            {/* Grid Catalog */}
+            {/* Grid Catalog (using Shadcn Card Component) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {medicines.map((med) => (
-                <article
+                <Card
                   key={med.id}
-                  className="group relative flex flex-col justify-between rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/20 p-4 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-800 transition-all duration-300"
+                  onClick={() => handleOpenMedicineDetails(med)}
+                  className="group relative flex flex-col justify-between rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/20 p-4 hover:shadow-lg dark:hover:bg-neutral-900/40 hover:border-neutral-350 dark:hover:border-neutral-800 transition-all duration-300 cursor-pointer"
                 >
-                  <div>
+                  <CardHeader className="p-0">
                     {/* Visual Product Image Container */}
                     <div className="relative w-full h-44 rounded-xl bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 flex items-center justify-center overflow-hidden mb-4 p-4 transition-colors">
                       {med.image_url ? (
@@ -430,9 +455,9 @@ export default function App() {
                       )}
                       
                       {/* Floating Formulation Badge overlay */}
-                      <span className="absolute top-2 right-2 rounded-lg bg-white/90 dark:bg-neutral-950/80 px-2 py-0.5 text-[9px] font-bold text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-800/80 uppercase tracking-wider backdrop-blur-xs shadow-xs">
+                      <Badge className="absolute top-2 right-2 rounded-lg bg-white/90 dark:bg-neutral-950/80 px-2 py-0.5 text-[9px] font-extrabold text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-800/80 uppercase tracking-wider backdrop-blur-xs shadow-xs hover:bg-white/90 dark:hover:bg-neutral-950/80">
                         {med.formulation}
-                      </span>
+                      </Badge>
                     </div>
 
                     {/* Header: Name and Salt Info */}
@@ -445,9 +470,11 @@ export default function App() {
                     <div className="mt-1 text-xs font-semibold text-brand-green tracking-wider line-clamp-1">
                       {med.salt_name}
                     </div>
+                  </CardHeader>
 
+                  <CardContent className="p-0 mt-3">
                     {/* Composition details */}
-                    <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 min-h-[2rem]">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 min-h-[2rem]">
                       {med.composition}
                     </p>
 
@@ -458,11 +485,11 @@ export default function App() {
                         {med.status}
                       </span>
                     </div>
-                  </div>
+                  </CardContent>
 
                   {/* Pricing and Action Footer */}
-                  <div>
-                    <div className="mt-5 pt-4 border-t border-neutral-100 dark:border-neutral-900/80 flex items-center justify-between">
+                  <CardFooter className="p-0 flex flex-col mt-5">
+                    <div className="w-full pt-4 border-t border-neutral-100 dark:border-neutral-900/80 flex items-center justify-between">
                       <div>
                         <div className="text-[9px] text-neutral-400 dark:text-neutral-500 font-semibold uppercase tracking-wider">
                           Wholesale Price
@@ -485,49 +512,146 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* Add to order quick button */}
-                    <button
+                    {/* Add to order quick button (using Shadcn Button) */}
+                    <Button
                       onClick={handleAddToCart}
-                      className="mt-4 w-full cursor-pointer rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-850 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 py-2.5 text-xs font-bold dark:text-neutral-300 dark:hover:bg-brand-green dark:hover:text-white dark:hover:border-brand-green transition-all duration-200"
+                      className="mt-4 w-full cursor-pointer rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-850 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 py-2 text-xs font-bold dark:text-neutral-300 dark:hover:bg-brand-green dark:hover:text-white dark:hover:border-brand-green transition-all duration-200 shadow-none"
                     >
                       Add to wholesale order
-                    </button>
-                  </div>
-                </article>
+                    </Button>
+                  </CardFooter>
+                </Card>
               ))}
             </div>
 
             {/* Pagination Controls */}
             {pages > 1 && (
               <footer className="mt-16 flex items-center justify-between border-t border-neutral-200 dark:border-neutral-900 pt-6">
-                <button
+                <Button
                   disabled={page === 1}
                   onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                  className="cursor-pointer flex items-center justify-center rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 px-4 py-2 text-sm font-semibold text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-800 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+                  variant="outline"
+                  className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 px-4 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-400 cursor-pointer"
                 >
                   Previous
-                </button>
+                </Button>
 
                 <div className="hidden sm:flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400">
                   <span>Page</span>
                   <span className="font-semibold text-neutral-800 dark:text-white">{page}</span>
                   <span>of</span>
                   <span className="font-semibold text-neutral-800 dark:text-white">{pages}</span>
-                  <span className="text-xs text-neutral-400 dark:text-neutral-600 ml-2">( {total} total items )</span>
+                  <span className="text-xs text-neutral-450 dark:text-neutral-600 ml-2">( {total} total items )</span>
                 </div>
 
-                <button
+                <Button
                   disabled={page === pages}
                   onClick={() => setPage((prev) => Math.min(prev + 1, pages))}
-                  className="cursor-pointer flex items-center justify-center rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 px-4 py-2 text-sm font-semibold text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-800 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+                  variant="outline"
+                  className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 px-4 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-400 cursor-pointer"
                 >
                   Next
-                </button>
+                </Button>
               </footer>
             )}
           </>
         )}
       </main>
+
+      {/* Premium Medicine Details Dialog Modal (Shadcn Dialog Component) */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-2xl bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 rounded-3xl text-neutral-800 dark:text-neutral-100 p-6 sm:p-8">
+          {selectedMedicine && (
+            <>
+              <DialogHeader>
+                <div className="flex flex-wrap gap-2 items-center mb-2">
+                  <Badge className="bg-brand-green/20 text-brand-green border border-brand-green/30 hover:bg-brand-green/20 font-bold uppercase text-[9px]">
+                    {selectedMedicine.formulation}
+                  </Badge>
+                  <Badge variant="outline" className="border-amber-500/30 text-amber-600 dark:text-amber-500 font-bold uppercase text-[9px]">
+                    {selectedMedicine.status}
+                  </Badge>
+                </div>
+                <DialogTitle className="text-2xl font-bold text-neutral-900 dark:text-white flex items-center justify-between">
+                  {selectedMedicine.name}
+                  <span className="text-xl font-extrabold text-neutral-900 dark:text-white">${selectedMedicine.price.toFixed(2)}</span>
+                </DialogTitle>
+                <DialogDescription className="text-xs font-semibold text-brand-green tracking-wide mt-1 uppercase">
+                  {selectedMedicine.salt_name}
+                </DialogDescription>
+              </DialogHeader>
+
+              {/* Detailed specs */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 border-t border-neutral-200 dark:border-neutral-900 pt-6">
+                
+                {/* Left Column: Visual description & images */}
+                <div className="flex flex-col gap-4">
+                  <div className="w-full h-48 rounded-2xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 flex items-center justify-center p-6 overflow-hidden">
+                    {selectedMedicine.image_url ? (
+                      <img
+                        src={selectedMedicine.image_url}
+                        alt={selectedMedicine.name}
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    ) : (
+                      <div className="text-neutral-500 text-xs font-mono">No Product Image</div>
+                    )}
+                  </div>
+                  <div className="text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-900/50 p-4 rounded-xl border border-neutral-200 dark:border-neutral-900">
+                    <span className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1">Composition:</span>
+                    {selectedMedicine.composition}
+                  </div>
+                </div>
+
+                {/* Right Column: Medical Details */}
+                <div className="flex flex-col gap-4">
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">
+                    <span className="font-bold text-neutral-800 dark:text-white block mb-1 text-sm">Product Description</span>
+                    <p className="leading-relaxed">{selectedMedicine.description || "No description available."}</p>
+                  </div>
+
+                  <div className="text-xs bg-red-500/5 border border-red-500/10 p-4 rounded-xl">
+                    <span className="font-bold text-red-600 dark:text-red-400 block mb-1">Observed Side Effects</span>
+                    <p className="leading-relaxed text-red-500/80 dark:text-red-400/80">{selectedMedicine.side_effects || "No recorded side effects."}</p>
+                  </div>
+
+                  <div className="text-xs bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-900 p-4 rounded-xl">
+                    <span className="font-bold text-neutral-800 dark:text-white block mb-1">Standard Dosage</span>
+                    <p className="leading-relaxed">{selectedMedicine.dosage || "As prescribed by physician."}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer Controls */}
+              <div className="mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-900 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-sm">
+                  <span className="text-neutral-500 dark:text-neutral-400">Wholesale Availability: </span>
+                  <span className="font-bold text-emerald-500">{selectedMedicine.stock} units</span>
+                  <span className="text-neutral-400 dark:text-neutral-500 block text-xs mt-0.5">Minimum Order Quantity: {selectedMedicine.min_order_quantity} units</span>
+                </div>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsModalOpen(false)}
+                    className="rounded-xl flex-grow sm:flex-grow-0 cursor-pointer border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      handleAddToCart()
+                      setIsModalOpen(false)
+                    }}
+                    className="rounded-xl flex-grow sm:flex-grow-0 bg-brand-green hover:bg-brand-green-hover text-white font-bold cursor-pointer"
+                  >
+                    Add to order
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
