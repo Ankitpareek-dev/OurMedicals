@@ -109,7 +109,8 @@ def read_root():
 def get_medicines(
     page: int = 1,
     page_size: int = 20,
-    search: Optional[str] = None
+    search: Optional[str] = None,
+    formulation: Optional[str] = None
 ):
     if page < 1:
         page = 1
@@ -132,6 +133,10 @@ def get_medicines(
         
         query = supabase.table("medicines").select("*, salts(name)", count="exact")
         
+        if formulation:
+            clean_formulation = formulation.strip()
+            query = query.ilike("formulation", f"%{clean_formulation}%")
+            
         if search:
             # Clean search term to avoid issues and use PostgREST wildcard *
             clean_search = search.strip().replace(",", " ").replace(".", " ").replace(";", " ")

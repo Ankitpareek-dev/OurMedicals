@@ -45,7 +45,8 @@ const CATEGORIES = [
   { name: "Liquids", count: 131, filter: "LIQUID" },
   { name: "Topicals", count: 142, filter: "TOPICAL" },
   { name: "Capsules", count: 71, filter: "CAPSUL" },
-  { name: "Drops & Sprays", count: 63, filter: "DROP" }
+  { name: "Drops & Sprays", count: 63, filter: "DROP" },
+  { name: "Injections", count: 62, filter: "INJECTION" }
 ]
 
 // Mock promotions data
@@ -191,14 +192,13 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
       try {
         let url = `${API_BASE}/api/medicines?page=${page}&page_size=${pageSize}`
         
-        let combinedSearch = searchQuery
         const catObj = CATEGORIES.find(c => c.name === selectedCategory)
         if (catObj && catObj.filter) {
-          combinedSearch = combinedSearch ? `${combinedSearch} ${catObj.filter}` : catObj.filter
+          url += `&formulation=${encodeURIComponent(catObj.filter)}`
         }
 
-        if (combinedSearch) {
-          url += `&search=${encodeURIComponent(combinedSearch)}`
+        if (searchQuery) {
+          url += `&search=${encodeURIComponent(searchQuery)}`
         }
 
         const token = isSignedIn ? await getToken() : null
@@ -359,7 +359,7 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
             <span className="text-[10px] font-extrabold text-neutral-450 dark:text-neutral-505 uppercase tracking-wider block mb-4 text-center">
               Quick Filter by Category
             </span>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
               {CATEGORIES.map((cat) => {
                 const isSelected = selectedCategory === cat.name
                 let icon = "📦"
@@ -369,6 +369,7 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                 else if (cat.name === "Topicals") icon = "🧴"
                 else if (cat.name === "Capsules") icon = "🧪"
                 else if (cat.name === "Drops & Sprays") icon = "💦"
+                else if (cat.name === "Injections") icon = "💉"
 
                 return (
                   <button
