@@ -125,7 +125,7 @@ function Header({ theme, toggleTheme, setSelectedCategory }) {
                   Categories
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid w-[320px] gap-1 p-2 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 rounded-lg shadow-none">
+                  <ul className="grid w-[320px] gap-1 p-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-850 rounded-lg shadow-none">
                     {CATEGORIES.map((cat) => {
                       let IconComponent = LayoutGrid
                       if (cat.name === "All Products") IconComponent = LayoutGrid
@@ -327,7 +327,7 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
     <>
       {/* Promos / Deals Slider */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="relative overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 p-8 sm:p-10 shadow-none">
+        <div className="relative overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-850 bg-neutral-50 dark:bg-neutral-900 p-8 sm:p-10 shadow-none">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10">
             {/* Promo Info */}
             <div className="max-w-lg">
@@ -358,7 +358,7 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
 
             {/* Promo Product Image */}
             <div className="hidden md:flex justify-end pr-4">
-              <div className="bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-850 p-4 rounded-lg relative z-10">
+              <div className="bg-white dark:bg-white border border-neutral-200 dark:border-neutral-200 p-4 rounded-lg relative z-10">
                 <img
                   src={PROMOTIONS[activeBanner].image}
                   alt="Promo formulation"
@@ -521,11 +521,11 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                 return (
                   <Card 
                     key={med.id}
-                    className="group relative flex flex-col justify-between rounded-lg border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 p-4 transition-colors duration-200 hover:border-brand-green/50 dark:hover:border-brand-green/40 hover:bg-neutral-50/20 dark:hover:bg-neutral-900/10 shadow-none"
+                    className="group relative flex flex-col justify-between rounded-lg border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-900 p-4 transition-colors duration-200 hover:border-brand-green/50 dark:hover:border-brand-green/40 hover:bg-neutral-50/20 dark:hover:bg-neutral-900/10 shadow-none"
                   >
                     <Link to={`/${categorySlug}/${nameSlug}`} className="block">
                       <CardHeader className="p-0">
-                        <div className="relative w-full h-40 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-850 flex items-center justify-center overflow-hidden mb-3.5 p-4 transition-colors">
+                        <div className="relative w-full h-40 rounded-md bg-white dark:bg-white border border-neutral-200 dark:border-neutral-200 flex items-center justify-center overflow-hidden mb-3.5 p-4 transition-colors">
                           {med.image_url ? (
                             <img
                               src={med.image_url}
@@ -781,8 +781,8 @@ function MedicineDetailView() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         {/* Left main info */}
         <div className="lg:col-span-8 flex flex-col gap-6">
-          <div className="flex flex-col md:flex-row gap-6 items-start bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-850 rounded-lg p-6 shadow-none">
-            <div className="w-full md:w-1/3 flex items-center justify-center bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-850 rounded-md p-4 h-56 overflow-hidden relative">
+          <div className="flex flex-col md:flex-row gap-6 items-start bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-850 rounded-lg p-6 shadow-none">
+            <div className="w-full md:w-1/3 flex items-center justify-center bg-white dark:bg-white border border-neutral-200 dark:border-neutral-200 rounded-md p-4 h-56 overflow-hidden relative">
               {medicine.image_url ? (
                 <img
                   src={medicine.image_url}
@@ -821,7 +821,7 @@ function MedicineDetailView() {
           </div>
 
           {/* Description Sheets */}
-          <div className="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-850 rounded-lg p-6 sm:p-8 flex flex-col gap-6 shadow-none">
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-850 rounded-lg p-6 sm:p-8 flex flex-col gap-6 shadow-none">
             <div>
               <h3 className="text-sm font-bold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-900 pb-2 mb-3">
                 Product Monograph / Description
@@ -880,7 +880,7 @@ function MedicineDetailView() {
 
         {/* Right column: Sticky Billing Card */}
         <div className="lg:col-span-4 lg:sticky lg:top-24 flex flex-col gap-6">
-          <Card className="rounded-lg border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 p-6 shadow-none">
+          <Card className="rounded-lg border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-900 p-6 shadow-none">
             <div className="flex items-end justify-between border-b border-neutral-150 dark:border-neutral-850 pb-4 mb-5">
               <div>
                 <span className="text-[10px] text-neutral-400 dark:text-neutral-500 font-bold uppercase tracking-wider block">Wholesale Price</span>
@@ -982,7 +982,7 @@ function MedicineDetailView() {
                 >
                   <Card className="h-full relative flex flex-col justify-between rounded-lg border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 p-4 hover:border-brand-green/50 dark:hover:border-brand-green/45 transition-colors duration-200 shadow-none cursor-pointer">
                     <div className="flex gap-4">
-                      <div className="h-20 w-20 shrink-0 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-850 flex items-center justify-center p-2 overflow-hidden">
+                      <div className="h-20 w-20 shrink-0 rounded-md bg-white dark:bg-white border border-neutral-200 dark:border-neutral-200 flex items-center justify-center p-2 overflow-hidden">
                         {relatedMed.image_url ? (
                           <img
                             src={relatedMed.image_url}
