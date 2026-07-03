@@ -20,6 +20,13 @@ import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle
+} from "@/components/ui/navigation-menu"
 import { useCartStore } from './store/useCartStore'
 
 const API_BASE = typeof window !== 'undefined'
@@ -79,86 +86,106 @@ function Header({ theme, toggleTheme }) {
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0)
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-neutral-200 dark:border-neutral-900 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md transition-colors duration-300">
+    <header className="sticky top-0 z-50 border-b border-neutral-200 dark:border-neutral-900 bg-white/85 dark:bg-neutral-950/85 backdrop-blur-md transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center gap-6">
+        {/* Logo and Shadcn Navigation Menu */}
+        <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center gap-3 cursor-pointer">
             <div className="h-8 w-8 rounded-lg bg-brand-green flex items-center justify-center font-bold text-white shadow-lg shadow-brand-green/30">
               M
             </div>
-            <span className="hidden sm:inline-block font-extrabold text-xl tracking-tight bg-gradient-to-r from-neutral-950 to-neutral-600 dark:from-white dark:via-neutral-200 dark:to-neutral-500 bg-clip-text text-transparent">
+            <span className="hidden sm:inline-block font-extrabold text-lg tracking-tight bg-gradient-to-r from-neutral-950 to-neutral-600 dark:from-white dark:via-neutral-200 dark:to-neutral-500 bg-clip-text text-transparent">
               Our Medicals
             </span>
           </Link>
-          
-          <div className="flex items-center gap-3 sm:gap-4 border-l border-neutral-200 dark:border-neutral-900 pl-4 sm:pl-6 text-[10px] sm:text-xs font-semibold">
-            <Link to="/" className="text-neutral-500 dark:text-neutral-400 hover:text-brand-green transition-colors">
-              Store
+
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList className="gap-1">
+              <NavigationMenuItem>
+                <Link to="/" className={`${navigationMenuTriggerStyle()} bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-300 hover:text-brand-green transition-colors`}>
+                  Store
+                </Link>
+              </NavigationMenuItem>
+              {isSignedIn && (
+                <NavigationMenuItem>
+                  <Link to="/my-orders" className={`${navigationMenuTriggerStyle()} bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-300 hover:text-brand-green transition-colors`}>
+                    My Orders
+                  </Link>
+                </NavigationMenuItem>
+              )}
+              {isAdmin && (
+                <NavigationMenuItem>
+                  <Link to="/admin" className={`${navigationMenuTriggerStyle()} bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-300 hover:text-brand-green transition-colors`}>
+                    Admin Portal
+                  </Link>
+                </NavigationMenuItem>
+              )}
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
+
+        {/* Mobile Navigation fallback */}
+        <div className="flex md:hidden items-center gap-3.5 text-[11px] font-bold">
+          <Link to="/" className="text-neutral-500 hover:text-brand-green transition">
+            Store
+          </Link>
+          {isSignedIn && (
+            <Link to="/my-orders" className="text-neutral-500 hover:text-brand-green transition">
+              Orders
             </Link>
-            {isSignedIn && (
-              <Link to="/my-orders" className="text-neutral-500 dark:text-neutral-400 hover:text-brand-green transition-colors">
-                My Orders
-              </Link>
-            )}
-            {isAdmin && (
-              <Link to="/admin" className="text-neutral-505 hover:text-brand-green transition-colors">
-                Admin Portal
-              </Link>
-            )}
-          </div>
+          )}
         </div>
 
         {/* Nav Controls */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {/* Theme Toggle */}
           <Button
             variant="outline"
             size="icon"
             onClick={toggleTheme}
-            className="rounded-xl h-10 w-10 border-neutral-200 dark:border-neutral-850 hover:bg-neutral-100 dark:hover:bg-neutral-900 cursor-pointer"
+            className="rounded-xl h-9.5 w-9.5 border-neutral-200 dark:border-neutral-850 hover:bg-neutral-100 dark:hover:bg-neutral-900 cursor-pointer shadow-xs"
           >
             {theme === 'dark' ? (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-neutral-350" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m2.828 0l-.707-.707m12.02-12.02l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
               </svg>
             ) : (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
             )}
           </Button>
 
           {/* Shopping Cart Link */}
-          <Link to="/cart" className="relative cursor-pointer p-2.5 rounded-xl border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
+          <Link to="/cart" className="relative cursor-pointer p-2 rounded-xl border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-900 text-neutral-500 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition shadow-xs">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
             {cartItemCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-brand-green text-[10px] font-bold text-white flex items-center justify-center border border-white dark:border-neutral-950 animate-bounce">
+              <span className="absolute -top-1.5 -right-1.5 h-4.5 w-4.5 rounded-full bg-brand-green text-[9px] font-bold text-white flex items-center justify-center border border-white dark:border-neutral-950 animate-bounce shadow-xs">
                 {cartItemCount}
               </span>
             )}
           </Link>
 
           {/* Auth status buttons */}
-          <div className="flex items-center gap-2 border-l border-neutral-200 dark:border-neutral-800 pl-4">
+          <div className="flex items-center gap-2 border-l border-neutral-200 dark:border-neutral-850 pl-3">
             <SignedOut>
               <SignInButton mode="modal">
-                <Button variant="ghost" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white cursor-pointer font-semibold text-sm">
+                <Button variant="ghost" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white cursor-pointer font-bold text-xs h-9 px-3">
                   Sign In
                 </Button>
               </SignInButton>
             </SignedOut>
             <SignUpButton mode="modal">
               <SignedOut>
-                <Button className="cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white shadow-lg shadow-brand-green/20 font-semibold text-sm">
+                <Button className="cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white shadow-md shadow-brand-green/10 font-bold text-xs h-9 px-4 transition">
                   Register
                 </Button>
               </SignedOut>
             </SignUpButton>
             <SignedIn>
-              <span className="hidden md:inline-block text-[10px] uppercase tracking-wider font-extrabold text-brand-green bg-brand-green/10 border border-brand-green/20 px-2.5 py-1.5 rounded-lg mr-2">
+              <span className="hidden md:inline-block text-[9px] uppercase tracking-wider font-extrabold text-brand-green bg-brand-green/10 border border-brand-green/20 px-2.5 py-1.5 rounded-lg mr-2">
                 Verified Pharmacist
               </span>
               <UserButton afterSignOutUrl="/" />
@@ -166,7 +193,7 @@ function Header({ theme, toggleTheme }) {
           </div>
         </div>
       </div>
-    </nav>
+    </header>
   )
 }
 
