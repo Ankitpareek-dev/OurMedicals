@@ -25,6 +25,8 @@ import {
   NavigationMenuList,
   NavigationMenuItem,
   NavigationMenuLink,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
   navigationMenuTriggerStyle
 } from "@/components/ui/navigation-menu"
 import { useCartStore } from './store/useCartStore'
@@ -79,11 +81,20 @@ const PROMOTIONS = [
 ]
 
 /* ================= HEADER COMPONENT ================= */
-function Header({ theme, toggleTheme }) {
+/* ================= HEADER COMPONENT ================= */
+function Header({ theme, toggleTheme, setSelectedCategory }) {
+  const navigate = useNavigate()
   const { isSignedIn, user } = useUser()
   const isAdmin = isSignedIn && user?.publicMetadata?.role === 'admin'
   const cart = useCartStore((state) => state.cart)
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0)
+
+  const handleCategorySelect = (categoryName) => {
+    if (setSelectedCategory) {
+      setSelectedCategory(categoryName)
+    }
+    navigate('/')
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-neutral-200 dark:border-neutral-900 bg-white/85 dark:bg-neutral-950/85 backdrop-blur-md transition-colors duration-300">
@@ -106,6 +117,45 @@ function Header({ theme, toggleTheme }) {
                   Store
                 </Link>
               </NavigationMenuItem>
+
+              {/* Categories Dropdown Menu */}
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-300 hover:text-brand-green transition-colors cursor-pointer text-sm font-medium">
+                  Categories
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[320px] gap-1 p-2 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 rounded-2xl shadow-lg">
+                    {CATEGORIES.map((cat) => {
+                      let icon = "📦"
+                      if (cat.name === "All Products") icon = "🏥"
+                      else if (cat.name === "Tablets") icon = "💊"
+                      else if (cat.name === "Liquids") icon = "🥛"
+                      else if (cat.name === "Topicals") icon = "🧴"
+                      else if (cat.name === "Capsules") icon = "🧪"
+                      else if (cat.name === "Drops & Sprays") icon = "💦"
+                      else if (cat.name === "Injections") icon = "💉"
+
+                      return (
+                        <li key={cat.name}>
+                          <NavigationMenuLink asChild>
+                            <button
+                              onClick={() => handleCategorySelect(cat.name)}
+                              className="w-full flex items-center gap-3.5 p-2 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900 transition text-left cursor-pointer"
+                            >
+                              <span className="text-xl">{icon}</span>
+                              <div className="flex flex-col">
+                                <span className="text-xs font-bold text-neutral-800 dark:text-neutral-200">{cat.name}</span>
+                                <span className="text-[9px] text-neutral-450 mt-0.5">{cat.count} formulas</span>
+                              </div>
+                            </button>
+                          </NavigationMenuLink>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
               {isSignedIn && (
                 <NavigationMenuItem>
                   <Link to="/my-orders" className={`${navigationMenuTriggerStyle()} bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-300 hover:text-brand-green transition-colors`}>
@@ -2700,7 +2750,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-100 font-sans selection:bg-brand-green selection:text-white transition-colors duration-300">
-        <Header theme={theme} toggleTheme={toggleTheme} />
+        <Header theme={theme} toggleTheme={toggleTheme} setSelectedCategory={setSelectedCategory} />
         
         <Routes>
           <Route
