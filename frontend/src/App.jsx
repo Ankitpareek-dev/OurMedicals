@@ -358,11 +358,11 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
 
             {/* Promo Product Image */}
             <div className="hidden md:flex justify-end pr-4">
-              <div className="bg-white dark:bg-white border border-neutral-200 dark:border-neutral-850 p-4 rounded-lg relative z-10">
+              <div className="bg-neutral-50 dark:bg-neutral-200 border border-neutral-200 dark:border-neutral-800 p-4 rounded-lg relative z-10">
                 <img
                   src={PROMOTIONS[activeBanner].image}
                   alt="Promo formulation"
-                  className="h-32 w-auto object-contain transition-transform duration-300 hover:scale-102"
+                  className="h-32 w-auto object-contain transition-transform duration-300 hover:scale-102 mix-blend-multiply"
                 />
               </div>
             </div>
@@ -525,13 +525,13 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                   >
                     <Link to={`/${categorySlug}/${nameSlug}`} className="block">
                       <CardHeader className="p-0">
-                        <div className="relative w-full h-40 rounded-md bg-white dark:bg-white border border-neutral-200 dark:border-neutral-850 flex items-center justify-center overflow-hidden mb-3.5 p-4 transition-colors">
+                        <div className="relative w-full h-40 rounded-md bg-neutral-50 dark:bg-neutral-200 border border-neutral-200 dark:border-neutral-800 flex items-center justify-center overflow-hidden mb-3.5 p-4 transition-colors">
                           {med.image_url ? (
                             <img
                               src={med.image_url}
                               alt={med.name}
                               loading="lazy"
-                              className="max-h-full max-w-full object-contain transform group-hover:scale-103 transition-transform duration-250"
+                              className="max-h-full max-w-full object-contain transform group-hover:scale-103 transition-transform duration-250 mix-blend-multiply"
                               onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src = 'https://placehold.co/200x200/e5e5e5/171717?text=Medicine';
@@ -782,12 +782,12 @@ function MedicineDetailView() {
         {/* Left main info */}
         <div className="lg:col-span-8 flex flex-col gap-6">
           <div className="flex flex-col md:flex-row gap-6 items-start bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-850 rounded-lg p-6 shadow-none">
-            <div className="w-full md:w-1/3 flex items-center justify-center bg-white dark:bg-white border border-neutral-200 dark:border-neutral-850 rounded-md p-4 h-56 overflow-hidden relative">
+            <div className="w-full md:w-1/3 flex items-center justify-center bg-neutral-50 dark:bg-neutral-200 border border-neutral-200 dark:border-neutral-800 rounded-md p-4 h-56 overflow-hidden relative">
               {medicine.image_url ? (
                 <img
                   src={medicine.image_url}
                   alt={medicine.name}
-                  className="max-h-full max-w-full object-contain transform hover:scale-[1.02] transition-transform duration-250"
+                  className="max-h-full max-w-full object-contain transform hover:scale-[1.02] transition-transform duration-250 mix-blend-multiply"
                 />
               ) : (
                 <div className="text-neutral-400 dark:text-neutral-600 text-xs font-mono">No Image</div>
@@ -982,7 +982,7 @@ function MedicineDetailView() {
                 >
                   <Card className="h-full relative flex flex-col justify-between rounded-lg border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 p-4 hover:border-brand-green/50 dark:hover:border-brand-green/45 transition-colors duration-200 shadow-none cursor-pointer">
                     <div className="flex gap-4">
-                      <div className="h-20 w-20 shrink-0 rounded-md bg-white dark:bg-white border border-neutral-200 dark:border-neutral-850 flex items-center justify-center p-2 overflow-hidden">
+                      <div className="h-20 w-20 shrink-0 rounded-md bg-neutral-50 dark:bg-neutral-200 border border-neutral-200 dark:border-neutral-800 flex items-center justify-center p-2 overflow-hidden">
                         {relatedMed.image_url ? (
                           <img
                             src={relatedMed.image_url}
