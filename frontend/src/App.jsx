@@ -40,12 +40,12 @@ const slugify = (text) => {
 
 // Categories list
 const CATEGORIES = [
-  { name: "All Products", count: 1958, filter: "" },
-  { name: "Tablets", count: 840, filter: "TABLETS" },
-  { name: "Capsules", count: 520, filter: "CAPSULES" },
-  { name: "Topicals", count: 210, filter: "TOPICALS" },
-  { name: "Ortho Support", count: 180, filter: "ORTHO SUPPORT" },
-  { name: "Surgicals", count: 208, filter: "SURGICALS" }
+  { name: "All Products", count: 1000, filter: "" },
+  { name: "Tablets", count: 444, filter: "TABLET" },
+  { name: "Liquids", count: 131, filter: "LIQUID" },
+  { name: "Topicals", count: 142, filter: "TOPICAL" },
+  { name: "Capsules", count: 71, filter: "CAPSUL" },
+  { name: "Drops & Sprays", count: 63, filter: "DROP" }
 ]
 
 // Mock promotions data
@@ -57,16 +57,16 @@ const PROMOTIONS = [
     description: "Get an extra 10% off on all critical care formulations. Use code BULKMD10 at checkout.",
     bgClass: "from-brand-green/20 via-emerald-600/10 to-transparent",
     image: "https://www.leeford.in/images/ProductImages/medium/6904885b822d6-1761904731.png",
-    cta: "Shop Critical Care"
+    cta: "Shop Capsules"
   },
   {
     id: 2,
-    title: "Premium Ortho Support Deals",
+    title: "Essential Liquids Deals",
     badge: "Best Seller",
-    description: "Save up to 15% on bulk case packs of Abdominal Belts, Lumbar Supports, and Knee Braces.",
+    description: "Save up to 15% on bulk case packs of syrups, dry formulations, and oral suspensions.",
     bgClass: "from-emerald-500/20 via-teal-600/10 to-transparent",
     image: "https://www.leeford.in/images/ProductImages/medium/690adbdb558cb-1762319323.png",
-    cta: "Browse Ortho Gear"
+    cta: "Browse Liquids"
   }
 ]
 
@@ -269,7 +269,7 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Button 
-                  onClick={() => handleCategorySelect(PROMOTIONS[activeBanner].id === 1 ? "Capsules" : "Ortho Support")}
+                  onClick={() => handleCategorySelect(PROMOTIONS[activeBanner].id === 1 ? "Capsules" : "Liquids")}
                   className="cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-extrabold text-xs px-6 py-5.5 shadow-lg shadow-brand-green/20 hover:shadow-xl hover:shadow-brand-green/30 transition-all duration-200 transform hover:-translate-y-0.5"
                 >
                   {PROMOTIONS[activeBanner].cta}
@@ -365,11 +365,10 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                 let icon = "📦"
                 if (cat.name === "All Products") icon = "🏥"
                 else if (cat.name === "Tablets") icon = "💊"
-                else if (cat.name === "Capsules") icon = "🧪"
-                else if (cat.name === "Topicals") icon = "🧴"
-                else if (cat.name === "Ortho Support") icon = "🩼"
-                else if (cat.name === "Surgicals") icon = "✂️"
                 else if (cat.name === "Liquids") icon = "🥛"
+                else if (cat.name === "Topicals") icon = "🧴"
+                else if (cat.name === "Capsules") icon = "🧪"
+                else if (cat.name === "Drops & Sprays") icon = "💦"
 
                 return (
                   <button
@@ -2053,7 +2052,7 @@ function CheckoutView() {
         }
 
         const token = isSignedIn ? await getToken() : null
-        const resOrder = await fetch("${API_BASE}/api/orders", {
+        const resOrder = await fetch(`${API_BASE}/api/orders`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -2094,7 +2093,7 @@ function CheckoutView() {
     // Razorpay online checkout integration
     try {
       // 1. Create order on backend API
-      const resOrder = await fetch("${API_BASE}/api/payments/create-order", {
+      const resOrder = await fetch(`${API_BASE}/api/payments/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: grandTotal })
@@ -2118,7 +2117,7 @@ function CheckoutView() {
           try {
             setSubmitLoading(true)
             // 3. Verify Razorpay signature on backend
-            const resVerify = await fetch("${API_BASE}/api/payments/verify-signature", {
+            const resVerify = await fetch(`${API_BASE}/api/payments/verify-signature`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -2153,7 +2152,7 @@ function CheckoutView() {
             }
 
             const token = isSignedIn ? await getToken() : null
-            const resOrderDb = await fetch("${API_BASE}/api/orders", {
+            const resOrderDb = await fetch(`${API_BASE}/api/orders`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -2460,7 +2459,7 @@ function MyOrdersView() {
       setError('')
       try {
         const token = await getToken()
-        const response = await fetch("${API_BASE}/api/orders/my", {
+        const response = await fetch(`${API_BASE}/api/orders/my`, {
           headers: {
             'Authorization': token ? `Bearer ${token}` : 'Bearer mock-token-for-local-dev'
           }
