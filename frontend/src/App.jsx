@@ -103,10 +103,10 @@ function Header({ theme, toggleTheme, setSelectedCategory }) {
         {/* Logo and Shadcn Navigation Menu */}
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center gap-3 cursor-pointer">
-            <div className="h-8 w-8 rounded-lg bg-brand-green flex items-center justify-center font-bold text-white shadow-lg shadow-brand-green/30">
+            <div className="h-8 w-8 rounded-lg bg-brand-green flex items-center justify-center font-bold text-white shadow-none shadow-none">
               M
             </div>
-            <span className="hidden sm:inline-block font-extrabold text-lg tracking-tight bg-gradient-to-r from-neutral-950 to-neutral-600 dark:from-white dark:via-neutral-200 dark:to-neutral-500 bg-clip-text text-transparent">
+            <span className="hidden sm:inline-block font-bold text-lg tracking-tight bg-gradient-to-r from-neutral-950 to-neutral-600 dark:from-white dark:via-neutral-200 dark:to-neutral-500 bg-clip-text text-transparent">
               Our Medicals
             </span>
           </Link>
@@ -125,7 +125,7 @@ function Header({ theme, toggleTheme, setSelectedCategory }) {
                   Categories
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid w-[320px] gap-1 p-2 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 rounded-2xl shadow-lg">
+                  <ul className="grid w-[320px] gap-1 p-2 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 rounded-lg shadow-none">
                     {CATEGORIES.map((cat) => {
                       let IconComponent = LayoutGrid
                       if (cat.name === "All Products") IconComponent = LayoutGrid
@@ -141,7 +141,7 @@ function Header({ theme, toggleTheme, setSelectedCategory }) {
                           <NavigationMenuLink asChild>
                             <button
                               onClick={() => handleCategorySelect(cat.name)}
-                              className="w-full flex items-center gap-3.5 p-2 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900 transition text-left cursor-pointer group"
+                              className="w-full flex items-center gap-3.5 p-2 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-900 transition text-left cursor-pointer group"
                             >
                               <IconComponent className="h-4 w-4 text-brand-green/80 group-hover:text-brand-green transition-colors" />
                               <div className="flex flex-col">
@@ -194,7 +194,7 @@ function Header({ theme, toggleTheme, setSelectedCategory }) {
             variant="outline"
             size="icon"
             onClick={toggleTheme}
-            className="rounded-xl h-9.5 w-9.5 border-neutral-200 dark:border-neutral-850 hover:bg-neutral-100 dark:hover:bg-neutral-900 cursor-pointer shadow-xs"
+            className="rounded-md h-9.5 w-9.5 border-neutral-200 dark:border-neutral-850 hover:bg-neutral-100 dark:hover:bg-neutral-900 cursor-pointer shadow-none"
           >
             {theme === 'dark' ? (
               <svg className="w-4 h-4 text-neutral-350" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -208,12 +208,12 @@ function Header({ theme, toggleTheme, setSelectedCategory }) {
           </Button>
 
           {/* Shopping Cart Link */}
-          <Link to="/cart" className="relative cursor-pointer p-2 rounded-xl border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-900 text-neutral-500 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition shadow-xs">
+          <Link to="/cart" className="relative cursor-pointer p-2 rounded-md border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-900 text-neutral-500 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition shadow-none">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
             {cartItemCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 h-4.5 w-4.5 rounded-full bg-brand-green text-[9px] font-bold text-white flex items-center justify-center border border-white dark:border-neutral-950 animate-bounce shadow-xs">
+              <span className="absolute -top-1.5 -right-1.5 h-4.5 w-4.5 rounded-full bg-brand-green text-[9px] font-bold text-white flex items-center justify-center border border-white dark:border-neutral-950 animate-bounce shadow-none">
                 {cartItemCount}
               </span>
             )}
@@ -230,13 +230,13 @@ function Header({ theme, toggleTheme, setSelectedCategory }) {
             </SignedOut>
             <SignUpButton mode="modal">
               <SignedOut>
-                <Button className="cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white shadow-md shadow-brand-green/10 font-bold text-xs h-9 px-4 transition">
+                <Button className="cursor-pointer rounded-md bg-brand-green hover:bg-brand-green-hover text-white shadow-none shadow-none font-bold text-xs h-9 px-4 transition">
                   Register
                 </Button>
               </SignedOut>
             </SignUpButton>
             <SignedIn>
-              <span className="hidden md:inline-block text-[9px] uppercase tracking-wider font-extrabold text-brand-green bg-brand-green/10 border border-brand-green/20 px-2.5 py-1.5 rounded-lg mr-2">
+              <span className="hidden md:inline-block text-[9px] uppercase tracking-wider font-bold text-brand-green bg-brand-green/10 border border-brand-green/20 px-2.5 py-1.5 rounded-md mr-2">
                 Verified Pharmacist
               </span>
               <UserButton afterSignOutUrl="/" />
@@ -326,35 +326,30 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
   return (
     <>
       {/* Promos / Deals Slider */}
-      {/* Promos / Deals Slider */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="relative overflow-hidden rounded-[32px] border border-neutral-850 bg-neutral-950 p-8 sm:p-12 shadow-[0_25px_60px_rgba(141,195,45,0.06)] transition-all duration-500">
-          {/* Glowing background circles for depth */}
-          <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-brand-green/15 blur-[120px] pointer-events-none" />
-          <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
-
+        <div className="relative overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 p-8 sm:p-10 shadow-none">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10">
             {/* Promo Info */}
             <div className="max-w-lg">
-              <Badge className="bg-brand-green/10 text-brand-green border border-brand-green/30 px-3 py-1 font-extrabold text-[10px] uppercase tracking-wider rounded-lg shadow-none">
+              <Badge className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider rounded-md shadow-none">
                 {PROMOTIONS[activeBanner].badge}
               </Badge>
-              <h2 className="mt-5 text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+              <h2 className="mt-4 text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white tracking-tight leading-tight">
                 {PROMOTIONS[activeBanner].title}
               </h2>
-              <p className="mt-4 text-neutral-400 leading-relaxed text-sm sm:text-base">
+              <p className="mt-3 text-neutral-500 dark:text-neutral-400 text-xs sm:text-sm">
                 {PROMOTIONS[activeBanner].description}
               </p>
-              <div className="mt-8 flex flex-wrap gap-4">
+              <div className="mt-6 flex flex-wrap gap-3">
                 <Button 
                   onClick={() => handleCategorySelect(PROMOTIONS[activeBanner].id === 1 ? "Capsules" : "Liquids")}
-                  className="cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-extrabold text-xs px-6 py-5.5 shadow-lg shadow-brand-green/20 hover:shadow-xl hover:shadow-brand-green/30 transition-all duration-200 transform hover:-translate-y-0.5"
+                  className="cursor-pointer rounded-md bg-brand-green hover:bg-brand-green-hover text-white font-semibold text-xs px-4 py-2 border border-transparent shadow-none transition-colors"
                 >
                   {PROMOTIONS[activeBanner].cta}
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="rounded-xl border-neutral-800 bg-neutral-900/50 text-neutral-300 hover:text-white hover:bg-neutral-850 font-extrabold text-xs px-6 py-5.5 transition-all duration-200"
+                  className="rounded-md border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-850 font-semibold text-xs px-4 py-2 transition-colors shadow-none"
                 >
                   View Catalog Sheet
                 </Button>
@@ -362,26 +357,25 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
             </div>
 
             {/* Promo Product Image */}
-            <div className="hidden md:flex justify-center relative">
-              <div className="absolute w-64 h-64 bg-brand-green/10 rounded-full blur-[80px] z-0" />
-              <div className="bg-neutral-900/40 border border-neutral-850 p-6 rounded-[24px] backdrop-blur-xs relative z-10 shadow-inner">
+            <div className="hidden md:flex justify-end pr-4">
+              <div className="bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-850 p-4 rounded-lg relative z-10">
                 <img
                   src={PROMOTIONS[activeBanner].image}
                   alt="Promo formulation"
-                  className="h-48 w-auto object-contain transform hover:rotate-3 hover:scale-103 transition-all duration-300"
+                  className="h-32 w-auto object-contain transition-transform duration-300 hover:scale-102"
                 />
               </div>
             </div>
           </div>
 
           {/* Slider Indicators */}
-          <div className="absolute bottom-6 left-12 flex gap-2 z-10">
+          <div className="absolute bottom-4 left-8 flex gap-1.5 z-10">
             {PROMOTIONS.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setActiveBanner(idx)}
-                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                  activeBanner === idx ? 'w-8 bg-brand-green' : 'w-2.5 bg-neutral-800 hover:bg-neutral-700'
+                className={`h-1 rounded-sm transition-all duration-300 cursor-pointer ${
+                  activeBanner === idx ? 'w-6 bg-brand-green' : 'w-2 bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-750'
                 }`}
               />
             ))}
@@ -392,21 +386,20 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
       {/* Main Catalog listing */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         {/* Search & Category Selector Bar */}
-        {/* Search & Category Selector Bar */}
         <div className="bg-transparent mb-12">
           {/* Centered Title */}
           <div className="text-center max-w-2xl mx-auto mb-8">
-            <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">Wholesale Catalog</h1>
+            <h1 className="text-3xl font-bold text-neutral-900 dark:text-white tracking-tight">Wholesale Catalog</h1>
             <p className="text-xs text-neutral-500 mt-2 leading-relaxed">
               India's leading B2B procurement portal. Search formulations, verify compositions, and request dispatch terms.
             </p>
           </div>
           {/* Floating Search Bar */}
-          <div className="max-w-2xl mx-auto mb-12">
-            <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[22px] p-2 shadow-[0_15px_40px_rgba(0,0,0,0.03)] focus-within:shadow-[0_15px_45px_rgba(141,195,45,0.08)] focus-within:border-brand-green focus-within:ring-4 focus-within:ring-brand-green/10 transition-all duration-300">
-              <div className="pl-4 pr-2 text-neutral-400">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <div className="max-w-2xl mx-auto mb-10">
+            <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-md p-1.5 focus-within:border-brand-green transition-all duration-200">
+              <div className="pl-3 pr-1.5 text-neutral-400">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
               <Input
@@ -414,30 +407,28 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                 placeholder="Search active salts, generic formulations, brand name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none"
+                className="w-full bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-1.5 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none"
               />
               {searchTerm && (
                 <button
                   type="button"
                   onClick={handleClearSearch}
-                  className="p-1.5 text-neutral-450 hover:text-neutral-900 dark:hover:text-white text-xs cursor-pointer mr-3"
+                  className="p-1 text-neutral-450 hover:text-neutral-900 dark:hover:text-white text-xs cursor-pointer mr-2.5"
                 >
                   Clear
                 </button>
               )}
               <Button
                 type="submit"
-                className="cursor-pointer rounded-2xl bg-brand-green hover:bg-brand-green-hover text-white font-extrabold text-xs px-8 py-3.5 shadow-md shadow-brand-green/20 hover:shadow-lg transition-all duration-200"
+                className="cursor-pointer rounded-md bg-brand-green hover:bg-brand-green-hover text-white font-semibold text-xs px-6 py-2 transition-all duration-250 border border-transparent shadow-none"
               >
                 Search
               </Button>
             </form>
-          </div>          {/* PharmEasy-style Visual Category Grid */}
-          <div className="mt-8">
-            <span className="text-[10px] font-extrabold text-neutral-450 dark:text-neutral-505 uppercase tracking-wider block mb-4 text-center">
-              Quick Filter by Category
-            </span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+          </div>
+          {/* Dashboard Navigation Tabs */}
+          <div className="border-b border-neutral-200 dark:border-neutral-850 mb-8 overflow-x-auto scrollbar-none">
+            <div className="flex gap-2">
               {CATEGORIES.map((cat) => {
                 const isSelected = selectedCategory === cat.name
                 let IconComponent = LayoutGrid
@@ -453,16 +444,17 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                   <button
                     key={cat.name}
                     onClick={() => handleCategorySelect(cat.name)}
-                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 cursor-pointer ${
+                    className={`flex items-center gap-2 px-4 py-3 border-b-2 text-xs font-semibold whitespace-nowrap cursor-pointer transition-all ${
                       isSelected
-                        ? 'bg-brand-green/10 border-brand-green text-brand-green shadow-xs'
-                        : 'bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-900 text-neutral-600 dark:text-neutral-400 hover:border-brand-green/30 hover:bg-neutral-50/50'
+                        ? 'border-brand-green text-brand-green font-bold'
+                        : 'border-transparent text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
                     }`}
                   >
-                    <IconComponent className={`h-6 w-6 mb-2 transition-transform duration-200 hover:scale-110 ${
-                      isSelected ? 'text-brand-green' : 'text-neutral-400 dark:text-neutral-600'
-                    }`} />
-                    <span className="text-xs font-bold text-center tracking-wide">{cat.name}</span>
+                    <IconComponent className="h-3.5 w-3.5" />
+                    <span>{cat.name}</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-neutral-150 dark:bg-neutral-900 text-neutral-500 dark:text-neutral-400">
+                      {cat.count}
+                    </span>
                   </button>
                 )
               })}
@@ -487,7 +479,7 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
 
         {/* Error state */}
         {error && (
-          <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-center max-w-xl mx-auto my-12">
+          <div className="rounded-md border border-red-500/20 bg-red-500/10 p-6 text-center max-w-xl mx-auto my-12">
             <p className="text-red-600 dark:text-red-450 font-medium">{error}</p>
             <Button
               onClick={() => setPage(page)}
@@ -506,15 +498,15 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
             <p className="text-xs text-neutral-550 mt-4">Syncing wholesale pricing...</p>
           </div>
         ) : medicines.length === 0 ? (
-          <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/20 p-16 text-center max-w-md mx-auto my-12 shadow-xs">
+          <div className="rounded-lg border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 p-12 text-center max-w-md mx-auto my-12">
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white">No formulations in category</h3>
-            <p className="text-sm text-neutral-505 mt-2">
+            <p className="text-sm text-neutral-500 mt-2">
               We couldn't find any products in "{selectedCategory}" matching your search settings.
             </p>
             <Button
               onClick={handleClearSearch}
               variant="secondary"
-              className="mt-6 rounded-xl"
+              className="mt-6 rounded-md"
             >
               Reset Search filters
             </Button>
@@ -529,17 +521,17 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                 return (
                   <Card 
                     key={med.id}
-                    className="group relative flex flex-col justify-between rounded-2xl border border-neutral-250/80 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-4 hover:shadow-lg hover:border-brand-green/30 dark:hover:border-brand-green/20 transition-all duration-300"
+                    className="group relative flex flex-col justify-between rounded-lg border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 p-4 transition-colors duration-200 hover:border-brand-green/50 dark:hover:border-brand-green/40 hover:bg-neutral-50/20 dark:hover:bg-neutral-900/10 shadow-none"
                   >
                     <Link to={`/${categorySlug}/${nameSlug}`} className="block">
                       <CardHeader className="p-0">
-                        <div className="relative w-full h-40 rounded-xl bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 flex items-center justify-center overflow-hidden mb-3.5 p-4 transition-colors">
+                        <div className="relative w-full h-40 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-850 flex items-center justify-center overflow-hidden mb-3.5 p-4 transition-colors">
                           {med.image_url ? (
                             <img
                               src={med.image_url}
                               alt={med.name}
                               loading="lazy"
-                              className="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-300"
+                              className="max-h-full max-w-full object-contain transform group-hover:scale-103 transition-transform duration-250"
                               onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src = 'https://placehold.co/200x200/e5e5e5/171717?text=Medicine';
@@ -548,16 +540,16 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                           ) : (
                             <div className="text-neutral-400 dark:text-neutral-600 text-xs font-mono">No Image</div>
                           )}
-                          <Badge className="absolute top-2 right-2 rounded-lg bg-brand-green/10 px-2 py-0.5 text-[9px] font-extrabold text-brand-green border border-brand-green/20 uppercase tracking-wider backdrop-blur-xs shadow-none">
+                          <Badge className="absolute top-2 right-2 rounded-md bg-brand-green/10 px-2 py-0.5 text-[9px] font-bold text-brand-green border border-brand-green/20 uppercase tracking-wider backdrop-blur-xs shadow-none">
                             {med.formulation}
                           </Badge>
                         </div>
 
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-[10px] text-neutral-400 dark:text-neutral-500 font-bold uppercase tracking-wider">
+                          <span className="text-[10px] text-neutral-400 dark:text-neutral-500 font-semibold uppercase tracking-wider">
                             {med.salt_name || 'Generic Formulation'}
                           </span>
-                          <h3 className="font-extrabold text-base text-neutral-900 dark:text-white group-hover:text-brand-green transition-colors duration-200 line-clamp-1">
+                          <h3 className="font-bold text-base text-neutral-900 dark:text-white group-hover:text-brand-green transition-colors duration-200 line-clamp-1">
                             {med.name}
                           </h3>
                         </div>
@@ -570,13 +562,13 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                         
                         {/* Tags */}
                         <div className="mt-3.5 flex flex-wrap gap-1.5 items-center">
-                          <span className="text-[9px] px-2 py-0.5 bg-neutral-100 dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-800 rounded-md font-bold uppercase">
+                          <span className="text-[9px] px-2 py-0.5 bg-neutral-50 dark:bg-neutral-900/50 text-neutral-500 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-850 rounded-md font-semibold uppercase">
                             Min Order: {med.min_order_quantity || 10} qty
                           </span>
-                          <span className={`text-[9px] px-2 py-0.5 rounded-md font-bold uppercase border ${
+                          <span className={`text-[9px] px-2 py-0.5 rounded-md font-semibold uppercase border ${
                             med.stock > 100 
-                              ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' 
-                              : 'bg-amber-500/10 text-amber-600 border-amber-500/20'
+                              ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:bg-emerald-950/20' 
+                              : 'bg-amber-500/10 text-amber-600 border-amber-500/20 dark:bg-amber-950/20'
                           }`}>
                             Stock: {med.stock} units
                           </span>
@@ -592,13 +584,13 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                             <span className="text-[10px] text-neutral-400 line-through">
                               Rs. {(med.price * 1.35).toFixed(0)}
                             </span>
-                            <span className="text-[9px] font-bold text-emerald-600 bg-emerald-500/10 px-1 py-0.2 rounded-md">
+                            <span className="text-[9px] font-bold text-emerald-600 bg-emerald-500/10 px-1 py-0.2 rounded-md dark:bg-emerald-950/20">
                               SAVE 35%
                             </span>
                           </div>
-                          <div className="text-xl font-black text-neutral-900 dark:text-white mt-0.5">
+                          <div className="text-xl font-bold text-neutral-900 dark:text-white mt-0.5">
                             Rs. {med.price.toFixed(2)}
-                            <span className="text-[9px] text-neutral-400 dark:text-neutral-500 font-semibold lowercase ml-1">/ unit</span>
+                            <span className="text-[9px] text-neutral-450 dark:text-neutral-500 font-semibold lowercase ml-1">/ unit</span>
                           </div>
                         </div>
                       </div>
@@ -608,7 +600,7 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                           e.preventDefault();
                           addToCart(med, 1);
                         }}
-                        className="mt-4 w-full cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white py-2.5 text-xs font-bold shadow-md shadow-brand-green/10 transition-all duration-200"
+                        className="mt-4 w-full cursor-pointer rounded-md bg-brand-green hover:bg-brand-green-hover text-white py-2 text-xs font-semibold shadow-none border border-transparent transition-colors duration-200"
                       >
                         Add to wholesale order
                       </Button>
@@ -625,7 +617,7 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                   disabled={page === 1}
                   onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                   variant="outline"
-                  className="rounded-xl border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 px-4 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-400 cursor-pointer"
+                  className="rounded-md border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 px-4 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-400 cursor-pointer"
                 >
                   Previous
                 </Button>
@@ -641,7 +633,7 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                   disabled={page === pages}
                   onClick={() => setPage((prev) => Math.min(prev + 1, pages))}
                   variant="outline"
-                  className="rounded-xl border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 px-4 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-400 cursor-pointer"
+                  className="rounded-md border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 px-4 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-400 cursor-pointer"
                 >
                   Next
                 </Button>
@@ -751,12 +743,12 @@ function MedicineDetailView() {
 
   if (error || !medicine) {
     return (
-      <div className="max-w-xl mx-auto my-16 p-8 border border-neutral-200 dark:border-neutral-900 rounded-3xl text-center bg-white dark:bg-neutral-900/20 shadow-xs">
+      <div className="max-w-xl mx-auto my-16 p-8 border border-neutral-200 dark:border-neutral-850 rounded-lg text-center bg-white dark:bg-neutral-950">
         <h2 className="text-xl font-bold text-red-500">{error || "Product Not Found"}</h2>
-        <p className="text-sm text-neutral-550 mt-2">
+        <p className="text-sm text-neutral-500 mt-2">
           The requested medicine slug does not exist or has been removed from catalog listings.
         </p>
-        <Button onClick={() => navigate('/')} className="mt-6 rounded-xl bg-brand-green hover:bg-brand-green-hover text-white">
+        <Button onClick={() => navigate('/')} className="mt-6 rounded-md bg-brand-green hover:bg-brand-green-hover text-white font-semibold text-xs px-4 py-2 shadow-none border border-transparent">
           Back to Catalog
         </Button>
       </div>
@@ -777,7 +769,7 @@ function MedicineDetailView() {
         <Button
           variant="outline"
           onClick={() => navigate('/')}
-          className="rounded-xl border-neutral-250 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900 cursor-pointer text-xs flex items-center gap-2"
+          className="rounded-md border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900 cursor-pointer text-xs flex items-center gap-2 shadow-none"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.6} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -789,20 +781,20 @@ function MedicineDetailView() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         {/* Left main info */}
         <div className="lg:col-span-8 flex flex-col gap-6">
-          <div className="flex flex-col md:flex-row gap-6 items-start bg-white dark:bg-neutral-900/10 border border-neutral-250/80 dark:border-neutral-900 rounded-3xl p-6">
-            <div className="w-full md:w-1/3 flex items-center justify-center bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 rounded-2xl p-4 h-56 overflow-hidden relative">
+          <div className="flex flex-col md:flex-row gap-6 items-start bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-850 rounded-lg p-6 shadow-none">
+            <div className="w-full md:w-1/3 flex items-center justify-center bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-850 rounded-md p-4 h-56 overflow-hidden relative">
               {medicine.image_url ? (
                 <img
                   src={medicine.image_url}
                   alt={medicine.name}
-                  className="max-h-full max-w-full object-contain transform hover:scale-[1.03] transition-all duration-300"
+                  className="max-h-full max-w-full object-contain transform hover:scale-[1.02] transition-transform duration-250"
                 />
               ) : (
                 <div className="text-neutral-400 dark:text-neutral-600 text-xs font-mono">No Image</div>
               )}
               
               <div className="absolute top-2 left-2 flex flex-col gap-1">
-                <Badge className="bg-brand-green/20 text-brand-green border border-brand-green/25 font-bold uppercase text-[9px] hover:bg-brand-green/20">
+                <Badge className="bg-brand-green/20 text-brand-green border border-brand-green/25 font-bold uppercase text-[9px] hover:bg-brand-green/20 rounded-md">
                   {medicine.formulation}
                 </Badge>
               </div>
@@ -810,10 +802,10 @@ function MedicineDetailView() {
 
             <div className="w-full md:w-2/3 flex flex-col justify-between self-stretch">
               <div>
-                <span className="text-[10px] text-neutral-450 dark:text-neutral-500 font-extrabold uppercase tracking-wider block">
+                <span className="text-[10px] text-neutral-400 dark:text-neutral-500 font-semibold uppercase tracking-wider block">
                   {medicine.salt_name}
                 </span>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight mt-1">
+                <h1 className="text-2xl font-bold text-neutral-900 dark:text-white tracking-tight mt-1">
                   {medicine.name}
                 </h1>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-3 leading-relaxed">
@@ -829,7 +821,7 @@ function MedicineDetailView() {
           </div>
 
           {/* Description Sheets */}
-          <div className="bg-white dark:bg-neutral-900/10 border border-neutral-250/80 dark:border-neutral-900 rounded-3xl p-6 sm:p-8 flex flex-col gap-6">
+          <div className="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-850 rounded-lg p-6 sm:p-8 flex flex-col gap-6 shadow-none">
             <div>
               <h3 className="text-sm font-bold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-900 pb-2 mb-3">
                 Product Monograph / Description
@@ -840,7 +832,7 @@ function MedicineDetailView() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-rose-500/5 border border-rose-500/10 p-5 rounded-2xl">
+              <div className="bg-rose-500/5 border border-rose-500/10 p-5 rounded-md">
                 <h4 className="text-xs font-bold text-rose-600 dark:text-rose-450 uppercase tracking-wider mb-2 flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
                   Side Effects profile
@@ -850,7 +842,7 @@ function MedicineDetailView() {
                 </p>
               </div>
 
-              <div className="bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 p-5 rounded-2xl">
+              <div className="bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-850 p-5 rounded-md">
                 <h4 className="text-xs font-bold text-neutral-800 dark:text-white uppercase tracking-wider mb-2">
                   Dosage & Administration
                 </h4>
@@ -865,19 +857,19 @@ function MedicineDetailView() {
                 Regulatory Compliance & Batch Details
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-                <div className="bg-neutral-50 dark:bg-neutral-950 p-3 rounded-lg text-center border border-neutral-200 dark:border-neutral-900">
-                  <span className="text-neutral-450 dark:text-neutral-500 text-[10px] uppercase font-semibold">Origin</span>
+                <div className="bg-neutral-50 dark:bg-neutral-900/50 p-3 rounded-md text-center border border-neutral-200 dark:border-neutral-850">
+                  <span className="text-neutral-400 dark:text-neutral-500 text-[10px] uppercase font-semibold">Origin</span>
                   <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-1">Batch Certified</span>
                 </div>
-                <div className="bg-neutral-50 dark:bg-neutral-950 p-3 rounded-lg text-center border border-neutral-200 dark:border-neutral-900">
+                <div className="bg-neutral-50 dark:bg-neutral-900/50 p-3 rounded-md text-center border border-neutral-200 dark:border-neutral-850">
                   <span className="text-neutral-450 dark:text-neutral-500 text-[10px] uppercase font-semibold">Storage</span>
                   <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-1">Below 25°C</span>
                 </div>
-                <div className="bg-neutral-50 dark:bg-neutral-950 p-3 rounded-lg text-center border border-neutral-200 dark:border-neutral-900">
+                <div className="bg-neutral-50 dark:bg-neutral-900/50 p-3 rounded-md text-center border border-neutral-200 dark:border-neutral-850">
                   <span className="text-neutral-450 dark:text-neutral-500 text-[10px] uppercase font-semibold">Standard</span>
                   <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-1">GMP Compliant</span>
                 </div>
-                <div className="bg-neutral-50 dark:bg-neutral-950 p-3 rounded-lg text-center border border-neutral-200 dark:border-neutral-900">
+                <div className="bg-neutral-50 dark:bg-neutral-900/50 p-3 rounded-md text-center border border-neutral-200 dark:border-neutral-850">
                   <span className="text-neutral-450 dark:text-neutral-500 text-[10px] uppercase font-semibold">Scheduler</span>
                   <span className="font-bold text-neutral-800 dark:text-neutral-200 block mt-1">Schedule H1</span>
                 </div>
@@ -888,19 +880,19 @@ function MedicineDetailView() {
 
         {/* Right column: Sticky Billing Card */}
         <div className="lg:col-span-4 lg:sticky lg:top-24 flex flex-col gap-6">
-          <Card className="rounded-3xl border border-neutral-250/80 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 shadow-sm">
-            <div className="flex items-end justify-between border-b border-neutral-100 dark:border-neutral-900/60 pb-4 mb-5">
+          <Card className="rounded-lg border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 p-6 shadow-none">
+            <div className="flex items-end justify-between border-b border-neutral-150 dark:border-neutral-850 pb-4 mb-5">
               <div>
                 <span className="text-[10px] text-neutral-400 dark:text-neutral-500 font-bold uppercase tracking-wider block">Wholesale Price</span>
                 <div className="flex items-center gap-1 mt-1">
                   <span className="text-neutral-400 line-through text-xs">
                     Rs. {(medicine.price * 1.35).toFixed(0)}
                   </span>
-                  <span className="text-[9px] font-bold text-emerald-600 bg-emerald-500/10 px-1 py-0.2 rounded-md">
+                  <span className="text-[9px] font-bold text-emerald-600 bg-emerald-500/10 px-1 py-0.2 rounded-md dark:bg-emerald-950/20">
                     SAVE 35%
                   </span>
                 </div>
-                <span className="text-3xl font-black text-neutral-900 dark:text-white mt-0.5 block">
+                <span className="text-2xl font-bold text-neutral-900 dark:text-white mt-0.5 block">
                   Rs. {medicine.price.toFixed(2)}
                   <span className="text-xs font-normal text-neutral-400 dark:text-neutral-500 ml-1">/ unit</span>
                 </span>
@@ -909,8 +901,8 @@ function MedicineDetailView() {
                 <span className="text-[10px] text-neutral-400 dark:text-neutral-500 font-bold uppercase tracking-wider block">Availability</span>
                 <span className={`text-xs font-bold mt-2 block px-2 py-0.5 rounded-md border ${
                   medicine.stock > 100 
-                    ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' 
-                    : 'bg-amber-500/10 text-amber-600 border-amber-500/20'
+                    ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:bg-emerald-950/20' 
+                    : 'bg-amber-500/10 text-amber-600 border-amber-500/20 dark:bg-amber-950/20'
                 }`}>
                   {medicine.stock} units
                 </span>
@@ -920,11 +912,11 @@ function MedicineDetailView() {
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between pl-1">
                 <span className="text-xs font-bold text-neutral-600 dark:text-neutral-400">Order Quantity</span>
-                <div className="flex items-center gap-2 border border-neutral-200 dark:border-neutral-850 p-1.5 rounded-xl bg-neutral-50 dark:bg-neutral-950">
+                <div className="flex items-center gap-2 border border-neutral-200 dark:border-neutral-850 p-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 rounded-lg cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-900 font-bold text-xs"
+                    className="h-7 w-7 rounded-md cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-800 font-bold text-xs"
                     onClick={() => setOrderQuantity(prev => Math.max(medicine.min_order_quantity || 10, prev - 10))}
                   >
                     -
@@ -933,7 +925,7 @@ function MedicineDetailView() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 rounded-lg cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-900 font-bold text-xs"
+                    className="h-7 w-7 rounded-md cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-800 font-bold text-xs"
                     onClick={() => setOrderQuantity(prev => Math.min(medicine.stock || 9999, prev + 10))}
                   >
                     +
@@ -941,21 +933,21 @@ function MedicineDetailView() {
                 </div>
               </div>
 
-              <div className="text-[10px] text-neutral-450 dark:text-neutral-500 italic pl-1 flex flex-col gap-1.5 border-t border-neutral-100 dark:border-neutral-900/60 pt-4 mt-1">
+              <div className="text-[10px] text-neutral-450 dark:text-neutral-500 italic pl-1 flex flex-col gap-1.5 border-t border-neutral-150 dark:border-neutral-850 pt-4 mt-1">
                 <div className="flex justify-between">
                   <span>Min Order Qty Requirement:</span>
                   <span className="font-bold text-neutral-700 dark:text-neutral-300">{medicine.min_order_quantity || 10} units</span>
                 </div>
                 <div className="flex justify-between text-neutral-900 dark:text-white font-bold text-xs pt-1">
                   <span>Grand Subtotal:</span>
-                  <span className="text-brand-green font-extrabold">Rs. {(medicine.price * orderQuantity).toFixed(2)}</span>
+                  <span className="text-brand-green font-bold">Rs. {(medicine.price * orderQuantity).toFixed(2)}</span>
                 </div>
               </div>
 
               <div className="flex flex-col gap-3 mt-3">
                 <Button
                   onClick={() => addToCart(medicine, orderQuantity)}
-                  className="cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs py-5 shadow-lg shadow-brand-green/20"
+                  className="cursor-pointer rounded-md bg-brand-green hover:bg-brand-green-hover text-white font-semibold text-xs py-2 shadow-none border border-transparent transition-colors duration-200"
                 >
                   Add to wholesale order
                 </Button>
@@ -988,9 +980,9 @@ function MedicineDetailView() {
                   to={`/${relatedCatSlug}/${relatedNameSlug}`}
                   className="block group"
                 >
-                  <Card className="h-full relative flex flex-col justify-between rounded-2xl border border-neutral-255 dark:border-neutral-900 bg-white/40 dark:bg-neutral-900/10 p-4 hover:shadow-md hover:border-neutral-350 dark:hover:border-neutral-800 transition-all duration-300 cursor-pointer">
+                  <Card className="h-full relative flex flex-col justify-between rounded-lg border border-neutral-200 dark:border-neutral-850 bg-white dark:bg-neutral-950 p-4 hover:border-brand-green/50 dark:hover:border-brand-green/45 transition-colors duration-200 shadow-none cursor-pointer">
                     <div className="flex gap-4">
-                      <div className="h-20 w-20 shrink-0 rounded-xl bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 flex items-center justify-center p-2 overflow-hidden">
+                      <div className="h-20 w-20 shrink-0 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-850 flex items-center justify-center p-2 overflow-hidden">
                         {relatedMed.image_url ? (
                           <img
                             src={relatedMed.image_url}
@@ -1011,7 +1003,7 @@ function MedicineDetailView() {
                             {relatedMed.salt_name}
                           </span>
                         </div>
-                        <div className="text-sm font-extrabold text-neutral-900 dark:text-white">
+                        <div className="text-sm font-bold text-neutral-900 dark:text-white">
                           Rs. {relatedMed.price.toFixed(2)}
                         </div>
                       </div>
@@ -1352,15 +1344,15 @@ function AdminView() {
       {/* Header section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-neutral-200 dark:border-neutral-900">
         <div>
-          <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">Admin Management Portal</h1>
+          <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Admin Management Portal</h1>
           <p className="text-xs text-neutral-505 mt-1.5">Track B2B wholesale purchases, dispatch shipments, and manage product listings.</p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => navigate('/')} variant="outline" className="rounded-xl border-neutral-250 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900">
+          <Button onClick={() => navigate('/')} variant="outline" className="rounded-md border-neutral-250 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900">
             View Storefront
           </Button>
           {activeTab === "INVENTORY" && !isEditing && (
-            <Button onClick={handleAddNewClick} className="rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold">
+            <Button onClick={handleAddNewClick} className="rounded-md bg-brand-green hover:bg-brand-green-hover text-white font-bold">
               Add New Medicine
             </Button>
           )}
@@ -1369,12 +1361,12 @@ function AdminView() {
 
       {/* Success / Error notification */}
       {successMsg && (
-        <div className="mb-6 p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
+        <div className="mb-6 p-4 rounded-md border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
           {successMsg}
         </div>
       )}
       {error && (
-        <div className="mb-6 p-4 rounded-xl border border-red-500/20 bg-red-500/10 text-red-655 font-bold text-xs">
+        <div className="mb-6 p-4 rounded-md border border-red-500/20 bg-red-500/10 text-red-655 font-bold text-xs">
           {error}
         </div>
       )}
@@ -1384,14 +1376,14 @@ function AdminView() {
         
         {/* Left Sidebar (3 columns) */}
         <div className="lg:col-span-3 flex flex-col gap-2">
-          <Card className="rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-4">
+          <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-4">
             <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block mb-3 px-2">Wholesale Orders</span>
             
             <button
               onClick={() => { setActiveTab("PENDING"); setIsEditing(false); }}
-              className={`w-full text-left rounded-xl px-3 py-2.5 text-xs font-bold transition flex items-center justify-between cursor-pointer ${
+              className={`w-full text-left rounded-md px-3 py-2.5 text-xs font-bold transition flex items-center justify-between cursor-pointer ${
                 activeTab === "PENDING"
-                  ? 'bg-brand-green border-brand-green text-white shadow-xs'
+                  ? 'bg-brand-green border-brand-green text-white shadow-none'
                   : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 border border-transparent'
               }`}
             >
@@ -1403,9 +1395,9 @@ function AdminView() {
 
             <button
               onClick={() => { setActiveTab("SHIPPING"); setIsEditing(false); }}
-              className={`w-full text-left rounded-xl px-3 py-2.5 text-xs font-bold transition flex items-center justify-between mt-1 cursor-pointer ${
+              className={`w-full text-left rounded-md px-3 py-2.5 text-xs font-bold transition flex items-center justify-between mt-1 cursor-pointer ${
                 activeTab === "SHIPPING"
-                  ? 'bg-brand-green border-brand-green text-white shadow-xs'
+                  ? 'bg-brand-green border-brand-green text-white shadow-none'
                   : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 border border-transparent'
               }`}
             >
@@ -1414,9 +1406,9 @@ function AdminView() {
 
             <button
               onClick={() => { setActiveTab("COMPLETED"); setIsEditing(false); }}
-              className={`w-full text-left rounded-xl px-3 py-2.5 text-xs font-bold transition flex items-center justify-between mt-1 cursor-pointer ${
+              className={`w-full text-left rounded-md px-3 py-2.5 text-xs font-bold transition flex items-center justify-between mt-1 cursor-pointer ${
                 activeTab === "COMPLETED"
-                  ? 'bg-brand-green border-brand-green text-white shadow-xs'
+                  ? 'bg-brand-green border-brand-green text-white shadow-none'
                   : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 border border-transparent'
               }`}
             >
@@ -1425,9 +1417,9 @@ function AdminView() {
 
             <button
               onClick={() => { setActiveTab("CANCELLED"); setIsEditing(false); }}
-              className={`w-full text-left rounded-xl px-3 py-2.5 text-xs font-bold transition flex items-center justify-between mt-1 cursor-pointer ${
+              className={`w-full text-left rounded-md px-3 py-2.5 text-xs font-bold transition flex items-center justify-between mt-1 cursor-pointer ${
                 activeTab === "CANCELLED"
-                  ? 'bg-brand-green border-brand-green text-white shadow-xs'
+                  ? 'bg-brand-green border-brand-green text-white shadow-none'
                   : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 border border-transparent'
               }`}
             >
@@ -1438,9 +1430,9 @@ function AdminView() {
 
             <button
               onClick={() => { setActiveTab("INVENTORY"); setIsEditing(false); }}
-              className={`w-full text-left rounded-xl px-3 py-2.5 text-xs font-bold transition flex items-center justify-between cursor-pointer ${
+              className={`w-full text-left rounded-md px-3 py-2.5 text-xs font-bold transition flex items-center justify-between cursor-pointer ${
                 activeTab === "INVENTORY"
-                  ? 'bg-brand-green border-brand-green text-white shadow-xs'
+                  ? 'bg-brand-green border-brand-green text-white shadow-none'
                   : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 border border-transparent'
               }`}
             >
@@ -1454,7 +1446,7 @@ function AdminView() {
           
           {/* Admin CRUD edit form pane */}
           {activeTab === "INVENTORY" && isEditing && (
-            <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 sm:p-8 mb-2 shadow-md">
+            <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 sm:p-8 mb-2 shadow-none">
               <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-6">
                 {formMedId ? `Edit Medicine Detail (ID: ${formMedId})` : 'Create New Medicine Record'}
               </h2>
@@ -1463,12 +1455,12 @@ function AdminView() {
                 
                 <div className="flex flex-col gap-2">
                   <label className="text-xs font-bold text-neutral-500">Brand Name</label>
-                  <Input required name="name" value={formFields.name} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                  <Input required name="name" value={formFields.name} onChange={handleFormChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <label className="text-xs font-bold text-neutral-500">Active Salt Name</label>
-                  <Input required name="salt_name" value={formFields.salt_name} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                  <Input required name="salt_name" value={formFields.salt_name} onChange={handleFormChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -1477,7 +1469,7 @@ function AdminView() {
                     name="formulation"
                     value={formFields.formulation}
                     onChange={handleFormChange}
-                    className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-2.5 text-sm text-neutral-800 dark:text-neutral-200"
+                    className="w-full rounded-md border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-2.5 text-sm text-neutral-800 dark:text-neutral-200"
                   >
                     <option value="TABLETS">TABLETS</option>
                     <option value="CAPSULES">CAPSULES</option>
@@ -1490,22 +1482,22 @@ function AdminView() {
 
                 <div className="flex flex-col gap-2">
                   <label className="text-xs font-bold text-neutral-500">Price (Rs.)</label>
-                  <Input required type="number" step="0.01" min="0.01" name="price" value={formFields.price} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                  <Input required type="number" step="0.01" min="0.01" name="price" value={formFields.price} onChange={handleFormChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <label className="text-xs font-bold text-neutral-500">Stock Count</label>
-                  <Input required type="number" min="0" name="stock" value={formFields.stock} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                  <Input required type="number" min="0" name="stock" value={formFields.stock} onChange={handleFormChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <label className="text-xs font-bold text-neutral-500">Minimum Order Quantity (MOQ)</label>
-                  <Input required type="number" min="1" name="min_order_quantity" value={formFields.min_order_quantity} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                  <Input required type="number" min="1" name="min_order_quantity" value={formFields.min_order_quantity} onChange={handleFormChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
                 </div>
 
                 <div className="flex flex-col gap-2 lg:col-span-3">
                   <label className="text-xs font-bold text-neutral-500">Image URL</label>
-                  <Input name="image_url" value={formFields.image_url} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                  <Input name="image_url" value={formFields.image_url} onChange={handleFormChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
                 </div>
 
                 <div className="flex flex-col gap-2 lg:col-span-3">
@@ -1515,7 +1507,7 @@ function AdminView() {
                     rows={2}
                     value={formFields.composition}
                     onChange={handleFormChange}
-                    className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-3 text-sm text-neutral-800 dark:text-neutral-200 outline-none focus:border-brand-green"
+                    className="w-full rounded-md border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-3 text-sm text-neutral-800 dark:text-neutral-200 outline-none focus:border-brand-green"
                   />
                 </div>
 
@@ -1526,18 +1518,18 @@ function AdminView() {
                     rows={3}
                     value={formFields.description}
                     onChange={handleFormChange}
-                    className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-955 p-3 text-sm text-neutral-800 dark:text-neutral-200 outline-none focus:border-brand-green"
+                    className="w-full rounded-md border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-955 p-3 text-sm text-neutral-800 dark:text-neutral-200 outline-none focus:border-brand-green"
                   />
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <label className="text-xs font-bold text-neutral-500">Observed Side Effects</label>
-                  <Input name="side_effects" value={formFields.side_effects} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                  <Input name="side_effects" value={formFields.side_effects} onChange={handleFormChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <label className="text-xs font-bold text-neutral-500">Standard Dosage Instruction</label>
-                  <Input name="dosage" value={formFields.dosage} onChange={handleFormChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                  <Input name="dosage" value={formFields.dosage} onChange={handleFormChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -1546,7 +1538,7 @@ function AdminView() {
                     name="status"
                     value={formFields.status}
                     onChange={handleFormChange}
-                    className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-550 dark:bg-neutral-955 p-2.5 text-sm text-neutral-800 dark:text-neutral-200"
+                    className="w-full rounded-md border border-neutral-200 dark:border-neutral-800 bg-neutral-550 dark:bg-neutral-955 p-2.5 text-sm text-neutral-800 dark:text-neutral-200"
                   >
                     <option value="OTC PRODUCT">OTC PRODUCT</option>
                     <option value="PRESCRIPTION ONLY DRUG">PRESCRIPTION ONLY DRUG</option>
@@ -1555,10 +1547,10 @@ function AdminView() {
                 </div>
 
                 <div className="flex gap-2 lg:col-span-3 justify-end mt-4">
-                  <Button type="button" variant="outline" onClick={handleCancelForm} className="rounded-xl cursor-pointer">
+                  <Button type="button" variant="outline" onClick={handleCancelForm} className="rounded-md cursor-pointer">
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={submitLoading} className="rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold cursor-pointer px-6">
+                  <Button type="submit" disabled={submitLoading} className="rounded-md bg-brand-green hover:bg-brand-green-hover text-white font-bold cursor-pointer px-6">
                     {submitLoading ? 'Saving...' : 'Save Product Record'}
                   </Button>
                 </div>
@@ -1569,7 +1561,7 @@ function AdminView() {
 
           {/* Conditional Orders view vs Inventory management */}
           {activeTab !== "INVENTORY" ? (
-            <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 shadow-sm">
+            <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 shadow-none">
               <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-900 pb-5 mb-6">
                 <div>
                   <h3 className="text-lg font-bold text-neutral-900 dark:text-white capitalize flex items-center gap-2">
@@ -1602,26 +1594,26 @@ function AdminView() {
               ) : (
                 <div className="flex flex-col gap-6">
                   {orders.map((order) => (
-                    <Card key={order.id} className="rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white/40 dark:bg-neutral-950/20 p-5 shadow-xs relative overflow-hidden transition hover:border-neutral-300 dark:hover:border-neutral-850">
+                    <Card key={order.id} className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white/40 dark:bg-neutral-950/20 p-5 shadow-none relative overflow-hidden transition hover:border-neutral-300 dark:hover:border-neutral-850">
                       
                       {/* Order top metrics */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 border-b border-neutral-150 dark:border-neutral-900/60 pb-4 mb-4 text-[11px]">
                         <div>
-                          <span className="text-[9px] uppercase font-extrabold text-neutral-400 block">Order ID</span>
-                          <span className="font-extrabold text-neutral-850 dark:text-white font-mono block mt-0.5">#{order.id}</span>
+                          <span className="text-[9px] uppercase font-bold text-neutral-400 block">Order ID</span>
+                          <span className="font-bold text-neutral-850 dark:text-white font-mono block mt-0.5">#{order.id}</span>
                         </div>
                         <div>
-                          <span className="text-[9px] uppercase font-extrabold text-neutral-400 block">Placed Date</span>
+                          <span className="text-[9px] uppercase font-bold text-neutral-400 block">Placed Date</span>
                           <span className="font-bold text-neutral-600 dark:text-neutral-300 block mt-0.5">
                             {new Date(order.created_at).toLocaleString()}
                           </span>
                         </div>
                         <div>
-                          <span className="text-[9px] uppercase font-extrabold text-neutral-400 block">Grand Total</span>
-                          <span className="font-extrabold text-brand-green block mt-0.5">Rs. {order.total_amount?.toFixed(2)}</span>
+                          <span className="text-[9px] uppercase font-bold text-neutral-400 block">Grand Total</span>
+                          <span className="font-bold text-brand-green block mt-0.5">Rs. {order.total_amount?.toFixed(2)}</span>
                         </div>
                         <div>
-                          <span className="text-[9px] uppercase font-extrabold text-neutral-400 block">Payment Details</span>
+                          <span className="text-[9px] uppercase font-bold text-neutral-400 block">Payment Details</span>
                           <span className={`font-bold block mt-0.5 ${
                             order.payment_status === 'PAID' ? 'text-emerald-500' : 'text-amber-500'
                           }`}>
@@ -1631,17 +1623,17 @@ function AdminView() {
                       </div>
 
                       {/* Pharmacy B2B details */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs bg-neutral-100/30 dark:bg-neutral-950/20 p-4 rounded-xl border border-neutral-150/40 dark:border-neutral-900/60">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs bg-neutral-100/30 dark:bg-neutral-950/20 p-4 rounded-md border border-neutral-150/40 dark:border-neutral-900/60">
                         <div>
-                          <h4 className="font-extrabold text-neutral-900 dark:text-white mb-2 uppercase tracking-wider text-[9px] text-neutral-455">Pharmacy Contact</h4>
+                          <h4 className="font-bold text-neutral-900 dark:text-white mb-2 uppercase tracking-wider text-[9px] text-neutral-455">Pharmacy Contact</h4>
                           <div className="text-neutral-600 dark:text-neutral-400 flex flex-col gap-1.5">
                             <div><span className="font-semibold text-neutral-500 mr-1">Name:</span> {order.pharmacy_name}</div>
-                            <div><span className="font-semibold text-neutral-500 mr-1">Drug License:</span> <span className="font-mono bg-neutral-200 dark:bg-neutral-900 px-1.5 py-0.5 rounded text-[10px] font-extrabold text-neutral-800 dark:text-neutral-250 border border-neutral-300 dark:border-neutral-800">{order.drug_license}</span></div>
+                            <div><span className="font-semibold text-neutral-500 mr-1">Drug License:</span> <span className="font-mono bg-neutral-200 dark:bg-neutral-900 px-1.5 py-0.5 rounded text-[10px] font-bold text-neutral-800 dark:text-neutral-250 border border-neutral-300 dark:border-neutral-800">{order.drug_license}</span></div>
                             <div><span className="font-semibold text-neutral-500 mr-1">Phone:</span> {order.phone}</div>
                           </div>
                         </div>
                         <div>
-                          <h4 className="font-extrabold text-neutral-900 dark:text-white mb-2 uppercase tracking-wider text-[9px] text-neutral-455">Shipping Destination</h4>
+                          <h4 className="font-bold text-neutral-900 dark:text-white mb-2 uppercase tracking-wider text-[9px] text-neutral-455">Shipping Destination</h4>
                           <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed font-medium">
                             {order.address}, {order.city}, {order.state} - {order.zip}
                           </p>
@@ -1651,7 +1643,7 @@ function AdminView() {
                       {/* Ordered formulation items table */}
                       <div className="mt-5">
                         <span className="text-[10px] uppercase font-bold text-neutral-455 block mb-2">Formulations Sourced ({order.order_items?.length || 0})</span>
-                        <div className="overflow-hidden border border-neutral-200 dark:border-neutral-900 rounded-xl">
+                        <div className="overflow-hidden border border-neutral-200 dark:border-neutral-900 rounded-md">
                           <table className="w-full text-left text-[11px] border-collapse">
                             <thead>
                               <tr className="bg-neutral-100/50 dark:bg-neutral-950 border-b border-neutral-200 dark:border-neutral-900 text-neutral-400 uppercase font-bold text-[9px]">
@@ -1689,14 +1681,14 @@ function AdminView() {
                           <>
                             <Button
                               onClick={() => handleUpdateOrderStatus(order.id, 'SHIPPING')}
-                              className="rounded-xl bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold px-4 py-2 cursor-pointer shadow-xs"
+                              className="rounded-md bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold px-4 py-2 cursor-pointer shadow-none"
                             >
                               Dispatch Order
                             </Button>
                             <Button
                               onClick={() => handleUpdateOrderStatus(order.id, 'CANCELLED')}
                               variant="ghost"
-                              className="rounded-xl hover:bg-red-500/10 text-red-550 text-xs font-bold px-4 py-2 cursor-pointer"
+                              className="rounded-md hover:bg-red-500/10 text-red-550 text-xs font-bold px-4 py-2 cursor-pointer"
                             >
                               Cancel Order
                             </Button>
@@ -1706,27 +1698,27 @@ function AdminView() {
                           <>
                             <Button
                               onClick={() => handleUpdateOrderStatus(order.id, 'COMPLETED', 'PAID')}
-                              className="rounded-xl bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold px-4 py-2 cursor-pointer shadow-xs"
+                              className="rounded-md bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold px-4 py-2 cursor-pointer shadow-none"
                             >
                               Mark as Delivered
                             </Button>
                             <Button
                               onClick={() => handleUpdateOrderStatus(order.id, 'CANCELLED')}
                               variant="ghost"
-                              className="rounded-xl hover:bg-red-500/10 text-red-550 text-xs font-bold px-4 py-2 cursor-pointer"
+                              className="rounded-md hover:bg-red-500/10 text-red-550 text-xs font-bold px-4 py-2 cursor-pointer"
                             >
                               Cancel Order
                             </Button>
                           </>
                         )}
                         {order.delivery_status === 'COMPLETED' && (
-                          <span className="text-[10px] font-extrabold text-emerald-500 uppercase flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+                          <span className="text-[10px] font-bold text-emerald-500 uppercase flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
                             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                             Completed Shipment
                           </span>
                         )}
                         {order.delivery_status === 'CANCELLED' && (
-                          <span className="text-[10px] font-extrabold text-red-500 uppercase flex items-center gap-1.5 bg-red-500/10 px-3 py-1.5 rounded-lg border border-red-500/20">
+                          <span className="text-[10px] font-bold text-red-500 uppercase flex items-center gap-1.5 bg-red-500/10 px-3 py-1.5 rounded-lg border border-red-500/20">
                             <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
                             Cancelled Purchase Order
                           </span>
@@ -1742,26 +1734,26 @@ function AdminView() {
             <>
               {/* Metrics overview card list */}
               <section className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <Card className="rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-5">
+                <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-5">
                   <span className="text-[10px] uppercase font-bold text-neutral-400">Total Catalog</span>
-                  <span className="text-2xl font-extrabold text-neutral-900 dark:text-white block mt-1">{metrics.totalCount} items</span>
+                  <span className="text-2xl font-bold text-neutral-900 dark:text-white block mt-1">{metrics.totalCount} items</span>
                 </Card>
-                <Card className="rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-5">
+                <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-5">
                   <span className="text-[10px] uppercase font-bold text-neutral-400">Low Stock Alert</span>
-                  <span className="text-2xl font-extrabold text-amber-500 block mt-1">{metrics.lowStockCount} items</span>
+                  <span className="text-2xl font-bold text-amber-500 block mt-1">{metrics.lowStockCount} items</span>
                 </Card>
-                <Card className="rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-5">
+                <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-5">
                   <span className="text-[10px] uppercase font-bold text-neutral-400">Out of Stock</span>
-                  <span className="text-2xl font-extrabold text-red-500 block mt-1">{metrics.outOfStockCount} items</span>
+                  <span className="text-2xl font-bold text-red-500 block mt-1">{metrics.outOfStockCount} items</span>
                 </Card>
-                <Card className="rounded-2xl border border-neutral-200 dark:border-neutral-905 bg-white dark:bg-neutral-900/10 p-5">
+                <Card className="rounded-lg border border-neutral-200 dark:border-neutral-905 bg-white dark:bg-neutral-900/10 p-5">
                   <span className="text-[10px] uppercase font-bold text-neutral-400">Average Unit Price</span>
-                  <span className="text-2xl font-extrabold text-brand-green block mt-1">Rs. {metrics.avgPrice.toFixed(2)}</span>
+                  <span className="text-2xl font-bold text-brand-green block mt-1">Rs. {metrics.avgPrice.toFixed(2)}</span>
                 </Card>
               </section>
 
               {/* Catalog Table */}
-              <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 overflow-hidden shadow-xs">
+              <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 overflow-hidden shadow-none">
                 
                 {/* Table Filter / Controls bar */}
                 <div className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-neutral-200 dark:border-neutral-900 pb-6 mb-6">
@@ -1774,7 +1766,7 @@ function AdminView() {
 
                   {/* Admin Table Search Bar */}
                   <div className="w-full md:w-72 flex gap-2">
-                    <div className="relative flex-grow flex items-center border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 px-2 py-1 rounded-xl focus-within:border-brand-green/50 transition">
+                    <div className="relative flex-grow flex items-center border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 px-2 py-1 rounded-md focus-within:border-brand-green/50 transition">
                       <input
                         type="text"
                         placeholder="Search brand matching..."
@@ -1795,7 +1787,7 @@ function AdminView() {
                     <Button
                       size="sm"
                       onClick={() => setAdminSearchQuery(adminSearch)}
-                      className="bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold rounded-xl cursor-pointer"
+                      className="bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold rounded-md cursor-pointer"
                     >
                       Filter
                     </Button>
@@ -1810,7 +1802,7 @@ function AdminView() {
                       onClick={() => setAdminCategory(cat.name)}
                       className={`cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold border transition ${
                         adminCategory === cat.name
-                          ? 'bg-brand-green border-brand-green text-white shadow-xs'
+                          ? 'bg-brand-green border-brand-green text-white shadow-none'
                           : 'bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-900 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 border border-transparent'
                       }`}
                     >
@@ -1900,7 +1892,7 @@ function CartView() {
 
   if (cart.length === 0) {
     return (
-      <main className="max-w-xl mx-auto my-24 p-8 border border-neutral-200 dark:border-neutral-900 rounded-3xl text-center bg-white dark:bg-neutral-900/20 shadow-xs relative z-10">
+      <main className="max-w-xl mx-auto my-24 p-8 border border-neutral-200 dark:border-neutral-900 rounded-lg text-center bg-white dark:bg-neutral-900/20 shadow-none relative z-10">
         <div className="h-16 w-16 rounded-full bg-brand-green/10 text-brand-green flex items-center justify-center mx-auto mb-6">
           <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -1910,7 +1902,7 @@ function CartView() {
         <p className="text-sm text-neutral-500 mt-3 leading-relaxed">
           Search the formulation catalog and add case packs of medicines to build your B2B purchase order.
         </p>
-        <Button onClick={() => navigate('/')} className="mt-8 rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold cursor-pointer px-6">
+        <Button onClick={() => navigate('/')} className="mt-8 rounded-md bg-brand-green hover:bg-brand-green-hover text-white font-bold cursor-pointer px-6">
           Browse Formulations
         </Button>
       </main>
@@ -1920,7 +1912,7 @@ function CartView() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">Wholesale Cart</h1>
+        <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Wholesale Cart</h1>
         <p className="text-xs text-neutral-500 mt-1.5">Review items and prepare purchase dispatch.</p>
       </div>
 
@@ -1929,10 +1921,10 @@ function CartView() {
         {/* Cart Item List (8 Columns) */}
         <div className="lg:col-span-8 flex flex-col gap-4">
           {cart.map((item) => (
-            <Card key={item.id} className="rounded-2xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <Card key={item.id} className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4 w-full sm:w-auto">
                 {/* Product thumbnail */}
-                <div className="h-16 w-16 rounded-xl bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 flex items-center justify-center p-2 shrink-0">
+                <div className="h-16 w-16 rounded-md bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 flex items-center justify-center p-2 shrink-0">
                   {item.image_url ? (
                     <img src={item.image_url} alt={item.name} className="max-h-full max-w-full object-contain" />
                   ) : (
@@ -1995,7 +1987,7 @@ function CartView() {
           ))}
 
           <div className="flex justify-between items-center mt-2 px-1">
-            <Button variant="ghost" onClick={clearCart} className="text-red-500 hover:bg-red-500/10 rounded-xl cursor-pointer text-xs font-bold">
+            <Button variant="ghost" onClick={clearCart} className="text-red-500 hover:bg-red-500/10 rounded-md cursor-pointer text-xs font-bold">
               Empty Shopping Cart
             </Button>
             <Link to="/" className="text-xs font-bold text-brand-green hover:underline">
@@ -2006,7 +1998,7 @@ function CartView() {
 
         {/* Pricing Summary Panel (4 Columns) */}
         <div className="lg:col-span-4">
-          <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 shadow-sm">
+          <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 shadow-none">
             <h2 className="text-base font-bold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-900 pb-3 mb-4">
               Wholesale Order Summary
             </h2>
@@ -2035,12 +2027,12 @@ function CartView() {
 
               <div className="border-t border-neutral-200 dark:border-neutral-900/80 pt-4 mt-2 flex justify-between text-sm">
                 <span className="font-bold text-neutral-900 dark:text-white">Estimated Total</span>
-                <span className="font-extrabold text-brand-green text-lg">Rs. {grandTotal.toFixed(2)}</span>
+                <span className="font-bold text-brand-green text-lg">Rs. {grandTotal.toFixed(2)}</span>
               </div>
 
               <Button
                 onClick={() => navigate('/checkout')}
-                className="mt-6 w-full cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs py-6 shadow-lg shadow-brand-green/20"
+                className="mt-6 w-full cursor-pointer rounded-md bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs py-6 shadow-none shadow-none"
               >
                 Proceed to Checkout
               </Button>
@@ -2090,9 +2082,9 @@ function CheckoutView() {
 
   if (cart.length === 0) {
     return (
-      <div className="max-w-md mx-auto my-24 p-8 border border-neutral-200 dark:border-neutral-900 rounded-3xl text-center bg-white dark:bg-neutral-900/20 shadow-xs">
+      <div className="max-w-md mx-auto my-24 p-8 border border-neutral-200 dark:border-neutral-900 rounded-lg text-center bg-white dark:bg-neutral-900/20 shadow-none">
         <h2 className="text-xl font-bold">No items for checkout</h2>
-        <Button onClick={() => navigate('/')} className="mt-6 rounded-xl bg-brand-green text-white">
+        <Button onClick={() => navigate('/')} className="mt-6 rounded-md bg-brand-green text-white">
           Return to Store
         </Button>
       </div>
@@ -2300,12 +2292,12 @@ function CheckoutView() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">Wholesale Checkout</h1>
+        <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Wholesale Checkout</h1>
         <p className="text-xs text-neutral-505 mt-1.5">Verify license credentials and billing address details.</p>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 rounded-xl border border-red-500/20 bg-red-500/10 text-red-655 font-bold text-xs">
+        <div className="mb-6 p-4 rounded-md border border-red-500/20 bg-red-500/10 text-red-655 font-bold text-xs">
           {error}
         </div>
       )}
@@ -2314,7 +2306,7 @@ function CheckoutView() {
         
         {/* Checkout Form (7 Columns) */}
         <div className="lg:col-span-7 flex flex-col gap-6">
-          <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 sm:p-8">
+          <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 sm:p-8">
             <h2 className="text-base font-bold text-neutral-900 dark:text-white mb-6 border-b border-neutral-200 dark:border-neutral-900/80 pb-3">
               1. B2B License Verification & Delivery Info
             </h2>
@@ -2322,49 +2314,49 @@ function CheckoutView() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-bold text-neutral-500">Pharmacy / Clinic Name</label>
-                <Input required name="pharmacyName" value={formFields.pharmacyName} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                <Input required name="pharmacyName" value={formFields.pharmacyName} onChange={handleInputChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-bold text-neutral-500">Drug License Number (DL-20B/21B)</label>
-                <Input required placeholder="DL-XX-XXXX-XXXX" name="drugLicense" value={formFields.drugLicense} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                <Input required placeholder="DL-XX-XXXX-XXXX" name="drugLicense" value={formFields.drugLicense} onChange={handleInputChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-bold text-neutral-500">Contact Number</label>
-                <Input required type="tel" name="phone" value={formFields.phone} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                <Input required type="tel" name="phone" value={formFields.phone} onChange={handleInputChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
               </div>
 
               <div className="flex flex-col gap-2 sm:col-span-2">
                 <label className="text-xs font-bold text-neutral-500">Delivery Address</label>
-                <Input required name="address" value={formFields.address} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                <Input required name="address" value={formFields.address} onChange={handleInputChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-bold text-neutral-500">City</label>
-                <Input required name="city" value={formFields.city} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                <Input required name="city" value={formFields.city} onChange={handleInputChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-bold text-neutral-500">State</label>
-                <Input required name="state" value={formFields.state} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                <Input required name="state" value={formFields.state} onChange={handleInputChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-bold text-neutral-500">Postal ZIP Code</label>
-                <Input required name="zip" value={formFields.zip} onChange={handleInputChange} className="rounded-xl bg-neutral-50 dark:bg-neutral-950" />
+                <Input required name="zip" value={formFields.zip} onChange={handleInputChange} className="rounded-md bg-neutral-50 dark:bg-neutral-950" />
               </div>
             </div>
           </Card>
 
           {/* Payment Method card */}
-          <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 sm:p-8">
+          <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 sm:p-8">
             <h2 className="text-base font-bold text-neutral-900 dark:text-white mb-6 border-b border-neutral-200 dark:border-neutral-900/80 pb-3">
               2. Choose B2B Payment Option
             </h2>
             
             <div className="flex flex-col gap-4">
-              <label className="flex items-center gap-3 cursor-pointer p-4 border border-neutral-200 dark:border-neutral-900 rounded-xl hover:bg-neutral-100/30 dark:hover:bg-neutral-900/30 transition">
+              <label className="flex items-center gap-3 cursor-pointer p-4 border border-neutral-200 dark:border-neutral-900 rounded-md hover:bg-neutral-100/30 dark:hover:bg-neutral-900/30 transition">
                 <input
                   type="radio"
                   name="paymentMethod"
@@ -2379,7 +2371,7 @@ function CheckoutView() {
                 </div>
               </label>
 
-              <label className="flex items-center gap-3 cursor-pointer p-4 border border-neutral-200 dark:border-neutral-900 rounded-xl hover:bg-neutral-100/30 dark:hover:bg-neutral-900/30 transition">
+              <label className="flex items-center gap-3 cursor-pointer p-4 border border-neutral-200 dark:border-neutral-900 rounded-md hover:bg-neutral-100/30 dark:hover:bg-neutral-900/30 transition">
                 <input
                   type="radio"
                   name="paymentMethod"
@@ -2399,7 +2391,7 @@ function CheckoutView() {
 
         {/* Order review sidebar (5 Columns) */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-          <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6">
+          <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6">
             <h2 className="text-base font-bold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-900 pb-3 mb-4">
               Order Review
             </h2>
@@ -2431,13 +2423,13 @@ function CheckoutView() {
               </div>
               <div className="border-t border-neutral-200 dark:border-neutral-900/80 pt-4 mt-2 flex justify-between text-sm">
                 <span className="font-bold text-neutral-900 dark:text-white">Grand Total</span>
-                <span className="font-extrabold text-brand-green text-base">Rs. {grandTotal.toFixed(2)}</span>
+                <span className="font-bold text-brand-green text-base">Rs. {grandTotal.toFixed(2)}</span>
               </div>
 
               <Button
                 type="submit"
                 disabled={submitLoading}
-                className="mt-6 w-full cursor-pointer rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs py-6 shadow-lg shadow-brand-green/20"
+                className="mt-6 w-full cursor-pointer rounded-md bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs py-6 shadow-none shadow-none"
               >
                 {submitLoading ? "Processing dispatch order..." : "Place Bulk Purchase Order"}
               </Button>
@@ -2464,7 +2456,7 @@ function OrderSuccessView() {
 
   return (
     <main className="max-w-2xl mx-auto my-16 px-4 py-8 relative z-10 text-center">
-      <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-8 sm:p-12 shadow-md">
+      <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-8 sm:p-12 shadow-none">
         
         {/* Success Icon */}
         <div className="h-16 w-16 rounded-full bg-brand-green/10 text-brand-green flex items-center justify-center mx-auto mb-6">
@@ -2473,14 +2465,14 @@ function OrderSuccessView() {
           </svg>
         </div>
 
-        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">Wholesale Purchase Placed</h1>
+        <h1 className="text-3xl font-bold text-neutral-900 dark:text-white tracking-tight">Wholesale Purchase Placed</h1>
         <p className="text-xs text-neutral-500 mt-2">Your B2B medicine order has been logged and queued for batch shipment.</p>
 
         {/* Order Details list */}
-        <div className="mt-8 bg-neutral-100/50 dark:bg-neutral-950/40 border border-neutral-200 dark:border-neutral-900 rounded-2xl p-6 text-left text-xs flex flex-col gap-4">
+        <div className="mt-8 bg-neutral-100/50 dark:bg-neutral-950/40 border border-neutral-200 dark:border-neutral-900 rounded-lg p-6 text-left text-xs flex flex-col gap-4">
           <div className="flex justify-between border-b border-neutral-200 dark:border-neutral-900/60 pb-2">
             <span className="text-neutral-450 uppercase font-bold tracking-wider text-[10px]">Order ID Number</span>
-            <span className="font-extrabold text-neutral-800 dark:text-white font-mono">{orderId}</span>
+            <span className="font-bold text-neutral-800 dark:text-white font-mono">{orderId}</span>
           </div>
 
           <div className="flex justify-between border-b border-neutral-200 dark:border-neutral-900/60 pb-2">
@@ -2495,20 +2487,20 @@ function OrderSuccessView() {
 
           <div className="flex justify-between border-b border-neutral-200 dark:border-neutral-900/60 pb-2">
             <span className="text-neutral-450 uppercase font-bold tracking-wider text-[10px]">Invoice Settlement Mode</span>
-            <span className="font-bold text-brand-green uppercase font-extrabold">{paymentMethod}</span>
+            <span className="font-bold text-brand-green uppercase font-bold">{paymentMethod}</span>
           </div>
 
           <div className="flex justify-between pt-1 text-sm font-bold">
             <span className="text-neutral-900 dark:text-white">Amount Billed</span>
-            <span className="text-brand-green font-extrabold text-base">Rs. {grandTotal.toFixed(2)}</span>
+            <span className="text-brand-green font-bold text-base">Rs. {grandTotal.toFixed(2)}</span>
           </div>
         </div>
 
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-          <Button onClick={() => navigate('/')} className="rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold cursor-pointer flex-grow sm:flex-grow-0 px-6 py-6">
+          <Button onClick={() => navigate('/')} className="rounded-md bg-brand-green hover:bg-brand-green-hover text-white font-bold cursor-pointer flex-grow sm:flex-grow-0 px-6 py-6">
             Continue Sourcing
           </Button>
-          <Button variant="outline" className="rounded-xl border-neutral-250 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900 cursor-pointer flex-grow sm:flex-grow-0 px-6 py-6">
+          <Button variant="outline" className="rounded-md border-neutral-250 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900 cursor-pointer flex-grow sm:flex-grow-0 px-6 py-6">
             Download Invoice PDF
           </Button>
         </div>
@@ -2574,10 +2566,10 @@ function MyOrdersView() {
 
   if (error) {
     return (
-      <div className="max-w-xl mx-auto my-16 p-8 border border-neutral-200 dark:border-neutral-900 rounded-3xl text-center bg-white dark:bg-neutral-900/20 shadow-xs">
+      <div className="max-w-xl mx-auto my-16 p-8 border border-neutral-200 dark:border-neutral-900 rounded-lg text-center bg-white dark:bg-neutral-900/20 shadow-none">
         <h2 className="text-xl font-bold text-red-500">Error</h2>
         <p className="text-sm text-neutral-550 mt-2">{error}</p>
-        <Button onClick={() => navigate('/')} className="mt-6 rounded-xl bg-brand-green hover:bg-brand-green-hover text-white">
+        <Button onClick={() => navigate('/')} className="mt-6 rounded-md bg-brand-green hover:bg-brand-green-hover text-white">
           Back to Storefront
         </Button>
       </div>
@@ -2588,16 +2580,16 @@ function MyOrdersView() {
     <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
       <div className="flex items-center justify-between gap-4 mb-8 pb-6 border-b border-neutral-200 dark:border-neutral-900">
         <div>
-          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white tracking-tight">Wholesale Order History</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white tracking-tight">Wholesale Order History</h1>
           <p className="text-xs text-neutral-500 mt-1">Track and monitor status of your B2B wholesale dispatches.</p>
         </div>
-        <Button onClick={() => navigate('/')} variant="outline" className="rounded-xl border-neutral-200 dark:border-neutral-850 hover:bg-neutral-100 dark:hover:bg-neutral-900 text-xs cursor-pointer">
+        <Button onClick={() => navigate('/')} variant="outline" className="rounded-md border-neutral-200 dark:border-neutral-850 hover:bg-neutral-100 dark:hover:bg-neutral-900 text-xs cursor-pointer">
           Continue Sourcing
         </Button>
       </div>
 
       {orders.length === 0 ? (
-        <Card className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-12 text-center">
+        <Card className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-12 text-center">
           <div className="h-12 w-12 rounded-full bg-neutral-100 dark:bg-neutral-950 flex items-center justify-center mx-auto mb-4 text-neutral-400">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -2605,32 +2597,32 @@ function MyOrdersView() {
           </div>
           <h3 className="font-bold text-neutral-900 dark:text-white">No Orders Found</h3>
           <p className="text-xs text-neutral-555 mt-1.5 max-w-sm mx-auto">You have not registered any B2B wholesale orders yet. Place items in your cart to execute a purchase order.</p>
-          <Button onClick={() => navigate('/')} className="mt-6 rounded-xl bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs py-4 px-6 cursor-pointer">
+          <Button onClick={() => navigate('/')} className="mt-6 rounded-md bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs py-4 px-6 cursor-pointer">
             Create First Order
           </Button>
         </Card>
       ) : (
         <div className="flex flex-col gap-6">
           {orders.map((order) => (
-            <Card key={order.id} className="rounded-3xl border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 overflow-hidden">
+            <Card key={order.id} className="rounded-lg border border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-900/10 p-6 overflow-hidden">
               {/* Header metrics */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-4 border-b border-neutral-100 dark:border-neutral-900/60 text-xs">
                 <div>
-                  <span className="text-[9px] uppercase font-extrabold text-neutral-400 block">Order ID</span>
-                  <span className="font-mono font-extrabold text-neutral-800 dark:text-white block mt-0.5">ORD-{order.id}</span>
+                  <span className="text-[9px] uppercase font-bold text-neutral-400 block">Order ID</span>
+                  <span className="font-mono font-bold text-neutral-800 dark:text-white block mt-0.5">ORD-{order.id}</span>
                 </div>
                 <div>
-                  <span className="text-[9px] uppercase font-extrabold text-neutral-400 block">Date Placed</span>
+                  <span className="text-[9px] uppercase font-bold text-neutral-400 block">Date Placed</span>
                   <span className="font-bold text-neutral-600 dark:text-neutral-300 block mt-0.5">
                     {new Date(order.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[9px] uppercase font-extrabold text-neutral-400 block">Total Amount</span>
-                  <span className="font-extrabold text-brand-green block mt-0.5">Rs. {order.total_amount?.toFixed(2)}</span>
+                  <span className="text-[9px] uppercase font-bold text-neutral-400 block">Total Amount</span>
+                  <span className="font-bold text-brand-green block mt-0.5">Rs. {order.total_amount?.toFixed(2)}</span>
                 </div>
                 <div>
-                  <span className="text-[9px] uppercase font-extrabold text-neutral-400 block">Delivery Status</span>
+                  <span className="text-[9px] uppercase font-bold text-neutral-400 block">Delivery Status</span>
                   <Badge className={`mt-1 font-bold text-[9px] uppercase ${
                     order.delivery_status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
                     order.delivery_status === 'SHIPPING' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
@@ -2645,14 +2637,14 @@ function MyOrdersView() {
               {/* Shipping address & payment details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-5 text-xs text-neutral-600 dark:text-neutral-400">
                 <div>
-                  <span className="text-[9px] uppercase font-extrabold text-neutral-400 block mb-1">Shipping Coordinates</span>
+                  <span className="text-[9px] uppercase font-bold text-neutral-400 block mb-1">Shipping Coordinates</span>
                   <p className="font-semibold text-neutral-850 dark:text-neutral-200">{order.pharmacy_name}</p>
                   <p>{order.address}, {order.city}</p>
                   <p>{order.state} - {order.zip}</p>
                   <p className="mt-1.5 font-semibold text-neutral-700 dark:text-neutral-300">Contact: {order.phone}</p>
                 </div>
                 <div>
-                  <span className="text-[9px] uppercase font-extrabold text-neutral-400 block mb-1">Billing & Settlement</span>
+                  <span className="text-[9px] uppercase font-bold text-neutral-400 block mb-1">Billing & Settlement</span>
                   <div className="flex flex-col gap-1.5 mt-1.5">
                     <div className="flex justify-between border-b border-neutral-100 dark:border-neutral-900/40 pb-1">
                       <span>Drug License:</span>
@@ -2677,8 +2669,8 @@ function MyOrdersView() {
 
               {/* Ordered items details list */}
               <div className="mt-5">
-                <span className="text-[9px] uppercase font-extrabold text-neutral-400 block mb-2">Formulations Ordered</span>
-                <div className="border border-neutral-150 dark:border-neutral-900/80 rounded-2xl overflow-hidden">
+                <span className="text-[9px] uppercase font-bold text-neutral-400 block mb-2">Formulations Ordered</span>
+                <div className="border border-neutral-150 dark:border-neutral-900/80 rounded-lg overflow-hidden">
                   <table className="w-full text-xs text-left">
                     <thead className="bg-neutral-100/50 dark:bg-neutral-950/40 text-neutral-450 font-bold border-b border-neutral-150 dark:border-neutral-900/80">
                       <tr>
