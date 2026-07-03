@@ -30,6 +30,7 @@ import {
   navigationMenuTriggerStyle
 } from "@/components/ui/navigation-menu"
 import { useCartStore } from './store/useCartStore'
+import { LayoutGrid, Pill, Droplet, Sparkles, Layers, Droplets, Syringe } from 'lucide-react'
 
 const API_BASE = typeof window !== 'undefined'
   ? `http://${window.location.hostname}:8000`
@@ -126,23 +127,23 @@ function Header({ theme, toggleTheme, setSelectedCategory }) {
                 <NavigationMenuContent>
                   <ul className="grid w-[320px] gap-1 p-2 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 rounded-2xl shadow-lg">
                     {CATEGORIES.map((cat) => {
-                      let icon = "📦"
-                      if (cat.name === "All Products") icon = "🏥"
-                      else if (cat.name === "Tablets") icon = "💊"
-                      else if (cat.name === "Liquids") icon = "🥛"
-                      else if (cat.name === "Topicals") icon = "🧴"
-                      else if (cat.name === "Capsules") icon = "🧪"
-                      else if (cat.name === "Drops & Sprays") icon = "💦"
-                      else if (cat.name === "Injections") icon = "💉"
+                      let IconComponent = LayoutGrid
+                      if (cat.name === "All Products") IconComponent = LayoutGrid
+                      else if (cat.name === "Tablets") IconComponent = Pill
+                      else if (cat.name === "Liquids") IconComponent = Droplet
+                      else if (cat.name === "Topicals") IconComponent = Sparkles
+                      else if (cat.name === "Capsules") IconComponent = Layers
+                      else if (cat.name === "Drops & Sprays") IconComponent = Droplets
+                      else if (cat.name === "Injections") IconComponent = Syringe
 
                       return (
                         <li key={cat.name}>
                           <NavigationMenuLink asChild>
                             <button
                               onClick={() => handleCategorySelect(cat.name)}
-                              className="w-full flex items-center gap-3.5 p-2 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900 transition text-left cursor-pointer"
+                              className="w-full flex items-center gap-3.5 p-2 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900 transition text-left cursor-pointer group"
                             >
-                              <span className="text-xl">{icon}</span>
+                              <IconComponent className="h-4 w-4 text-brand-green/80 group-hover:text-brand-green transition-colors" />
                               <div className="flex flex-col">
                                 <span className="text-xs font-bold text-neutral-800 dark:text-neutral-200">{cat.name}</span>
                                 <span className="text-[9px] text-neutral-450 mt-0.5">{cat.count} formulas</span>
@@ -439,14 +440,14 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
               {CATEGORIES.map((cat) => {
                 const isSelected = selectedCategory === cat.name
-                let icon = "📦"
-                if (cat.name === "All Products") icon = "🏥"
-                else if (cat.name === "Tablets") icon = "💊"
-                else if (cat.name === "Liquids") icon = "🥛"
-                else if (cat.name === "Topicals") icon = "🧴"
-                else if (cat.name === "Capsules") icon = "🧪"
-                else if (cat.name === "Drops & Sprays") icon = "💦"
-                else if (cat.name === "Injections") icon = "💉"
+                let IconComponent = LayoutGrid
+                if (cat.name === "All Products") IconComponent = LayoutGrid
+                else if (cat.name === "Tablets") IconComponent = Pill
+                else if (cat.name === "Liquids") IconComponent = Droplet
+                else if (cat.name === "Topicals") IconComponent = Sparkles
+                else if (cat.name === "Capsules") IconComponent = Layers
+                else if (cat.name === "Drops & Sprays") IconComponent = Droplets
+                else if (cat.name === "Injections") IconComponent = Syringe
 
                 return (
                   <button
@@ -458,7 +459,9 @@ function CatalogView({ activeBanner, setActiveBanner, selectedCategory, setSelec
                         : 'bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-900 text-neutral-600 dark:text-neutral-400 hover:border-brand-green/30 hover:bg-neutral-50/50'
                     }`}
                   >
-                    <span className="text-2xl mb-2">{icon}</span>
+                    <IconComponent className={`h-6 w-6 mb-2 transition-transform duration-200 hover:scale-110 ${
+                      isSelected ? 'text-brand-green' : 'text-neutral-400 dark:text-neutral-600'
+                    }`} />
                     <span className="text-xs font-bold text-center tracking-wide">{cat.name}</span>
                   </button>
                 )
