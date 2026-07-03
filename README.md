@@ -4,9 +4,10 @@ A premium, ultra-minimal monorepo template for a medical wholesale e-commerce pl
 
 ## Architecture
 
-* **Frontend:** React + Tailwind CSS v4 + Vite + Clerk (Email OTP)
-* **Backend:** Python + FastAPI + Uvicorn + PyJWT (Clerk Verification)
+* **Frontend:** React + Tailwind CSS v4 + Vite + Clerk (Identity) + Zustand (Persistent Cart Store)
+* **Backend:** Python + FastAPI + Uvicorn + PyJWT (Auth Verify) + Razorpay SDK (Payments & Refunds)
 * **Database:** Supabase (PostgreSQL)
+* **Version Control:** Git (Local & remote tracking)
 
 ---
 
