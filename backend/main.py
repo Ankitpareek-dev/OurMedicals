@@ -76,9 +76,10 @@ def require_admin(current_user: dict = Depends(get_current_user)):
         # Development mock user is admin
         return current_user
         
-    # Allow all authenticated users from the configured dev instance to access admin endpoints in development
+    # Allow dev instance bypass only if running in a test/development environment
+    is_dev_env = RAZORPAY_KEY_ID.startswith("rzp_test_")
     iss = current_user.get("iss", "")
-    if "suited-viper-53.clerk.accounts.dev" in iss:
+    if is_dev_env and "suited-viper-53.clerk.accounts.dev" in iss:
         return current_user
 
     public_metadata = current_user.get("public_metadata", {})
@@ -371,9 +372,16 @@ def create_razorpay_order(payload: PaymentOrderCreate):
 
 @app.post("/api/payments/verify-signature")
 def verify_payment_signature(payload: PaymentVerify):
-    # Bypass signature verification for mock sandbox orders
+    # Bypass signature verification for mock sandbox orders only in development environment
+    is_dev_env = RAZORPAY_KEY_ID.startswith("rzp_test_")
     if payload.order_id.startswith("order_mock_"):
-        return {"status": "success", "message": "Signature verified successfully (Mock Sandbox)"}
+        if is_dev_env:
+            return {"status": "success", "message": "Signature verified successfully (Mock Sandbox)"}
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="Mock orders are not allowed in production environment."
+            )
         
     try:
         client = get_razorpay_client()
@@ -424,6 +432,21 @@ class OrderStatusUpdate(BaseModel):
 def create_order(order_payload: OrderCreate, authorization: Optional[str] = Header(None)):
     try:
         supabase = get_supabase_client()
+        
+        # 1. Validate stock availability for all items first to prevent overselling and database inconsistencies
+        for item in order_payload.items:
+            med_res = supabase.table("medicines").select("name, stock").eq("id", item.medicine_id).execute()
+            if not med_res.data or len(med_res.data) == 0:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Formulation with ID {item.medicine_id} not found in catalog."
+                )
+            current_stock = med_res.data[0]["stock"]
+            if current_stock < item.quantity:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Insufficient stock for '{med_res.data[0]['name']}'. Available: {current_stock}, Requested: {item.quantity}"
+                )
         
         # Resolve user_id from auth header fallback if present
         resolved_user_id = order_payload.user_id
@@ -483,10 +506,12 @@ def create_order(order_payload: OrderCreate, authorization: Optional[str] = Head
             med_res = supabase.table("medicines").select("stock").eq("id", item.medicine_id).execute()
             if med_res.data and len(med_res.data) > 0:
                 current_stock = med_res.data[0]["stock"]
-                new_stock = max(0, current_stock - item.quantity)
+                new_stock = current_stock - item.quantity
                 supabase.table("medicines").update({"stock": new_stock}).eq("id", item.medicine_id).execute()
                 
         return {"message": "Order placed successfully", "order_id": order_id, "order": created_order}
+    except HTTPException as http_ex:
+        raise http_ex
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to record order: {str(e)}")
 
@@ -527,7 +552,7 @@ def update_order_status(id: int, payload: OrderStatusUpdate, current_user: dict 
         # Handle Cancellation
         if new_delivery_status == "CANCELLED" and prev_delivery_status != "CANCELLED":
             # 1. Razorpay refund if paid online
-            if order.get("payment_method") == "Razorpay Card/UPI" and order.get("payment_status") == "PAID":
+            if order.get("payment_method") in ["Razorpay Card/UPI", "Online Card/UPI (Razorpay)"] and order.get("payment_status") == "PAID":
                 rzp_pay_id = order.get("razorpay_payment_id")
                 if rzp_pay_id:
                     try:
